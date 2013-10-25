@@ -13,7 +13,7 @@
   "browser": true,
   "predef": [
     "jQuery",
-    "QUnit",
+    "mocha",
     "module",
     "test",
     "asyncTest",

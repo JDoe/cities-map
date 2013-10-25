@@ -36,13 +36,6 @@ module.exports = function (grunt) {
         dest: 'dist/jquery.<%= pkg.name %>.min.js'
       }
     },
-    qunit: {
-      all: {
-        options: {
-          urls: ['http://localhost:9000/test/<%= pkg.name %>.html']
-        }
-      }
-    },
     jshint: {
       gruntfile: {
         options: {
@@ -70,11 +63,11 @@ module.exports = function (grunt) {
       },
       src: {
         files: '<%= jshint.src.src %>',
-        tasks: ['jshint:src', 'qunit']
+        tasks: ['jshint:src', 'mocha']
       },
       test: {
         files: '<%= jshint.test.src %>',
-        tasks: ['jshint:test', 'qunit']
+        tasks: ['jshint:test', 'mocha']
       }
     },
     connect: {
@@ -84,6 +77,9 @@ module.exports = function (grunt) {
           port: 9000
         }
       }
+    },
+    mocha: {
+      index: ['test/cities-map.html']
     }
   });
 
@@ -91,13 +87,13 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-uglify');
-  grunt.loadNpmTasks('grunt-contrib-qunit');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-connect');
+  grunt.loadNpmTasks('grunt-mocha');
 
   // Default task.
-  grunt.registerTask('default', ['jshint', 'qunit', 'clean', 'concat', 'uglify']);
+  grunt.registerTask('default', ['jshint', 'mocha', 'clean', 'concat', 'uglify']);
   grunt.registerTask('server', ['connect', 'watch']);
-  grunt.registerTask('test', ['jshint', 'connect', 'qunit']);
+  grunt.registerTask('test', ['jshint', 'connect', 'mocha']);
 };
