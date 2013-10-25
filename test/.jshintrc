@@ -27,6 +27,10 @@
     "notDeepEqual",
     "strictEqual",
     "notStrictEqual",
-    "throws"
+    "throws",
+    "describe",
+    "it",
+    "_$",
+    "import"
   ]
 }

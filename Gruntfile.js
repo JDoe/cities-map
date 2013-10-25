@@ -22,9 +22,17 @@ module.exports = function (grunt) {
         banner: '<%= banner %>',
         stripBanners: true
       },
+      sources: {
+        src: ['src/cities-map.js'],
+        dest: 'src/all.js'
+      },
       dist: {
-        src: ['src/<%= pkg.name %>.js'],
+        src: ['src/all.js'],
         dest: 'dist/jquery.<%= pkg.name %>.js'
+      },
+      tests: {
+        src: ['test/cities-map.spec.js'],
+        dest: 'test/all.spec.js'
       }
     },
     uglify: {
@@ -51,7 +59,8 @@ module.exports = function (grunt) {
       },
       test: {
         options: {
-          jshintrc: 'test/.jshintrc'
+          jshintrc: 'test/.jshintrc',
+          ignores: ['test/index.spec.js']
         },
         src: ['test/**/*.js']
       }
@@ -80,6 +89,12 @@ module.exports = function (grunt) {
     },
     mocha: {
       index: ['test/cities-map.html']
+    },
+    smash: {
+      sinonAll: {
+        src: 'bower_components/sinon/lib/sinon.index.js',
+        dest: 'bower_components/sinon/lib/sinon.all.js'
+      }
     }
   });
 
@@ -91,9 +106,10 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-mocha');
+  grunt.loadNpmTasks('grunt-smash');
 
   // Default task.
-  grunt.registerTask('default', ['jshint', 'mocha', 'clean', 'concat', 'uglify']);
+  grunt.registerTask('default', ['jshint', 'clean', 'concat', 'mocha', 'concat', 'uglify']);
   grunt.registerTask('server', ['connect', 'watch']);
-  grunt.registerTask('test', ['jshint', 'connect', 'mocha']);
+  grunt.registerTask('test', ['jshint', 'smash', 'connect', 'concat', 'mocha']);
 };

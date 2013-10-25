@@ -1,1 +1,3 @@
 /node_modules/
+test/all.spec.js
+src/all.js
