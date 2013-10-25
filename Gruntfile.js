@@ -15,7 +15,7 @@ module.exports = function (grunt) {
       ' Licensed MIT */\n',
     // Task configuration.
     clean: {
-      files: ['dist']
+      files: ['dist', 'test/allspecs.js', 'src/all.js']
     },
     concat: {
       options: {
@@ -23,7 +23,7 @@ module.exports = function (grunt) {
         stripBanners: true
       },
       sources: {
-        src: ['src/cities-map.js'],
+        src: ['src/data.js', 'src/cities-map.js'],
         dest: 'src/all.js'
       },
       dist: {
@@ -31,8 +31,8 @@ module.exports = function (grunt) {
         dest: 'dist/jquery.<%= pkg.name %>.js'
       },
       tests: {
-        src: ['test/cities-map.spec.js'],
-        dest: 'test/all.spec.js'
+        src: ['test/**/*.spec.js'],
+        dest: 'test/allspecs.js'
       }
     },
     uglify: {
@@ -111,5 +111,5 @@ module.exports = function (grunt) {
   // Default task.
   grunt.registerTask('default', ['jshint', 'clean', 'concat', 'mocha', 'concat', 'uglify']);
   grunt.registerTask('server', ['connect', 'watch']);
-  grunt.registerTask('test', ['jshint', 'smash', 'connect', 'concat', 'mocha']);
+  grunt.registerTask('test', ['clean', 'jshint', 'smash', 'connect', 'concat', 'mocha']);
 };
