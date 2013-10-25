@@ -6,22 +6,33 @@
   <!-- Load local jQuery. -->
   <script src="../bower_components/jquery/jquery.js"></script>
   <!-- Load local QUnit. -->
-  <link rel="stylesheet" href="../bower_components/qunit/qunit/qunit.css" media="screen">
-  <script src="../bower_components/qunit/qunit/qunit.js"></script>
+  <link rel="stylesheet" href="../bower_components/mocha/mocha.css" media="screen">
+  <script src="../bower_components/mocha/mocha.js"></script>
+  <script src="../bower_components/chai/chai.js"></script>
+  <script src="../bower_components/sinon/lib/sinon.js"></script>
+  <script src="../bower_components/sinon/lib/sinon/call.js"></script>
+  <script src="../bower_components/sinon/lib/sinon/spy.js"></script>
   <!-- Load local lib and tests. -->
   <script src="../src/cities-map.js"></script>
-  <script src="cities-map_test.js"></script>
   <!-- Removing access to jQuery and $. But it'll still be available as _$, if
        you REALLY want to mess around with jQuery in the console. REMEMBER WE
        ARE TESTING A PLUGIN HERE, THIS HELPS ENSURE BEST PRACTICES. REALLY. -->
   <script>window._$ = jQuery.noConflict(true);</script>
+
+  <script type="text/javascript">
+    // Set up Chai and Mocha
+    window.should = chai.should;
+    chai.should();
+    mocha.setup('bdd');
+
+    window.onload = function () {
+      (window.mochaPhantomJS || mocha).run();
+    }
+  </script>
 </head>
 <body>
-  <div id="qunit"></div>
-  <div id="qunit-fixture">
-    <span>lame test markup</span>
-    <span>normal test markup</span>
-    <span>awesome test markup</span>
-  </div>
+  <div id="mocha"></div>
+
+  <script type="text/javascript" src="cities-map.spec.js"></script>
 </body>
 </html>
