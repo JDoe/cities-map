@@ -31,7 +31,7 @@ module.exports = function (grunt) {
         dest: 'dist/jquery.<%= pkg.name %>.js'
       },
       tests: {
-        src: ['test/**/*.spec.js'],
+        src: 'test/**/*.spec.js',
         dest: 'test/allspecs.js'
       }
     },
@@ -76,7 +76,7 @@ module.exports = function (grunt) {
       },
       test: {
         files: '<%= jshint.test.src %>',
-        tasks: ['jshint:test', 'mocha']
+        tasks: ['test']
       }
     },
     connect: {
@@ -111,5 +111,5 @@ module.exports = function (grunt) {
   // Default task.
   grunt.registerTask('default', ['jshint', 'clean', 'concat', 'mocha', 'concat', 'uglify']);
   grunt.registerTask('server', ['connect', 'watch']);
-  grunt.registerTask('test', ['clean', 'jshint', 'smash', 'connect', 'concat', 'mocha']);
+  grunt.registerTask('test', ['jshint', 'smash', 'connect', 'clean', 'concat', 'mocha']);
 };

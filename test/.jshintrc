@@ -30,7 +30,12 @@
     "throws",
     "describe",
     "it",
+    "before",
+    "beforeEach",
     "_$",
-    "import"
+    "import",
+    "CitiesMap",
+    "instanceof",
+    "console"
   ]
 }
