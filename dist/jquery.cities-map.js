@@ -1,9 +1,29 @@
-/*! cities-map - v0.0.1 - 2013-10-25
+/*! cities-map - v0.0.1 - 2013-11-04
 * https://github.com/TheDahv/cities-map
 * Copyright (c) 2013 David Pierce; Licensed MIT */
-/*! cities-map - v0.0.1 - 2013-10-25
+/*! cities-map - v0.0.1 - 2013-11-04
 * https://github.com/TheDahv/cities-map
 * Copyright (c) 2013 David Pierce; Licensed MIT */
+var root = window;
+var CitiesMap = root.CitiesMap = ( root.CitiesMap || {} );
+
+var Data = CitiesMap.Data = {};
+var $ = jQuery;
+
+Data.loadCitiesData = function (opts) {
+  var defaultOptions, options;
+
+  opts = opts || {};
+
+  defaultOptions = {
+    urlBase: 'http://swoop.startupweekend.org'
+  };
+
+  options = $.extend(defaultOptions, opts);
+
+  return $.get('' + options.urlBase + '/cities');
+};
+
 (function ($) {
 
   // Collection method.
