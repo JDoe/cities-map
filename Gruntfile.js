@@ -20,6 +20,7 @@ module.exports = function (grunt) {
     concat: {
       options: {
         banner: '<%= banner %>',
+        separator: ';',
         stripBanners: true
       },
       sources: {
@@ -37,7 +38,8 @@ module.exports = function (grunt) {
     },
     uglify: {
       options: {
-        banner: '<%= banner %>'
+        banner: '<%= banner %>',
+        wrap: true
       },
       dist: {
         src: '<%= concat.dist.dest %>',
@@ -58,11 +60,6 @@ module.exports = function (grunt) {
         src: ['src/**/*.js']
       },
       test: {
-        options: {
-          jshintrc: 'test/.jshintrc',
-          ignores: ['test/index.spec.js']
-        },
-        src: ['test/**/*.js']
       }
     },
     watch: {
@@ -75,7 +72,7 @@ module.exports = function (grunt) {
         tasks: ['jshint:src', 'mocha']
       },
       test: {
-        files: '<%= jshint.test.src %>',
+        files: ['test/**/*.js'],
         tasks: ['test']
       }
     },

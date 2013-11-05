@@ -1,7 +1,7 @@
-/*! cities-map - v0.0.1 - 2013-11-04
+/*! cities-map - v0.0.1 - 2013-11-05
 * https://github.com/TheDahv/cities-map
 * Copyright (c) 2013 David Pierce; Licensed MIT */
-/*! cities-map - v0.0.1 - 2013-11-04
+/*! cities-map - v0.0.1 - 2013-11-05
 * https://github.com/TheDahv/cities-map
 * Copyright (c) 2013 David Pierce; Licensed MIT */
 var root = window;
@@ -23,10 +23,15 @@ Data.loadCitiesData = function (opts) {
 
   return $.get('' + options.urlBase + '/cities');
 };
-
-(function ($) {
+;(function ($, CitiesMap) {
 
   // Collection method.
-  $.fn.citiesmap = function () {};
+  $.fn.citiesmap = function () {
+    CitiesMap.Data.loadCitiesData()
+      .error(function () {
+      })
+      .success(function () {
+      });
+  };
 
-}(jQuery));
+}(jQuery, CitiesMap));
