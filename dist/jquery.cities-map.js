@@ -23,15 +23,9 @@ Data.loadCitiesData = function (opts) {
 
   return $.get('' + options.urlBase + '/cities');
 };
-;(function ($, CitiesMap) {
+;(function ($) {
 
   // Collection method.
-  $.fn.citiesmap = function () {
-    CitiesMap.Data.loadCitiesData()
-      .error(function () {
-      })
-      .success(function () {
-      });
-  };
+  $.fn.citiesmap = function () {};
 
-}(jQuery, CitiesMap));
+}(jQuery));
