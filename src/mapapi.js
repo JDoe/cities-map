@@ -13,6 +13,8 @@
   var MapApi = CitiesMap.MapApi = function (mapContainer, mapOptions) {
     this.mapContainer = mapContainer;
     this.options = mapOptions || {};
+    this.mapRef = null;
+    this.mapPoints = [];
 
     this.writeMapToElement();
 
@@ -46,7 +48,19 @@
       $element.css('width', desiredWidth);
       $element.css('height', desiredHeight);
 
-      return new maps.Map($element[0], mapOptions);
+      this.mapRef = new maps.Map($element[0], mapOptions);
+      return this.mapRef;
+    };
+
+    MapApi.prototype.createCityPoint = function (city) {
+      var marker = new maps.Marker({
+        map: this.mapRef,
+        position: new maps.LatLng(city.location[0], city.location[1])
+      });
+
+      this.mapPoints.push(marker);
+
+      return marker;
     };
   }
 })(window);

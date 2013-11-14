@@ -18,8 +18,9 @@
       window.alert(errorMsg);
     });
 
-    data.success(function () {
-      new CitiesMap.MapApi(mapContainer);
+    data.success(function (cities) {
+      var map = new CitiesMap.MapApi(mapContainer);
+      cities.forEach(map.createCityPoint);
     });
   };
 

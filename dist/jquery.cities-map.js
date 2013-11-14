@@ -1,7 +1,7 @@
-/*! cities-map - v0.0.1 - 2013-11-13
+/*! cities-map - v0.0.1 - 2013-11-14
 * https://github.com/TheDahv/cities-map
 * Copyright (c) 2013 David Pierce; Licensed MIT */
-/*! cities-map - v0.0.1 - 2013-11-13
+/*! cities-map - v0.0.1 - 2013-11-14
 * https://github.com/TheDahv/cities-map
 * Copyright (c) 2013 David Pierce; Licensed MIT */
 (function (root, $) {
@@ -53,6 +53,8 @@
   var MapApi = CitiesMap.MapApi = function (mapContainer, mapOptions) {
     this.mapContainer = mapContainer;
     this.options = mapOptions || {};
+    this.mapRef = null;
+    this.mapPoints = [];
 
     this.writeMapToElement();
 
@@ -86,7 +88,19 @@
       $element.css('width', desiredWidth);
       $element.css('height', desiredHeight);
 
-      return new maps.Map($element[0], mapOptions);
+      this.mapRef = new maps.Map($element[0], mapOptions);
+      return this.mapRef;
+    };
+
+    MapApi.prototype.createCityPoint = function (city) {
+      var marker = new maps.Marker({
+        map: this.mapRef,
+        position: new maps.LatLng(city.location[0], city.location[1])
+      });
+
+      this.mapPoints.push(marker);
+
+      return marker;
     };
   }
 })(window);
@@ -102,8 +116,9 @@
       window.alert(errorMsg);
     });
 
-    data.success(function () {
-      new CitiesMap.MapApi(mapContainer);
+    data.success(function (cities) {
+      var map = new CitiesMap.MapApi(mapContainer);
+      cities.forEach(map.createCityPoint);
     });
   };
 
