@@ -10,9 +10,6 @@
   <script src="../bower_components/mocha/mocha.js"></script>
   <script src="../bower_components/chai/chai.js"></script>
   <script src="../bower_components/sinon/lib/sinon.all.js"></script>
-  <!-- Load local lib and tests. -->
-  <script src="../src/all.js"></script>
-
   <script type="text/javascript">
     // Set up Chai and Mocha
     window.should = chai.should;
@@ -21,12 +18,26 @@
 
     window.onload = function () {
       (window.mochaPhantomJS || mocha).run();
+    };
+
+    // Stub out Google Maps
+    window.google = {
+      maps: {
+        LatLng: function () { return {}; }
+      , MapTypeId: {
+          ROADMAP: 1
+        }
+      , Map: function () { return {}; }
+      }
     }
+    // window.mapsStub = sinon.stub(google.maps, 'LatLng').returns({});
   </script>
 </head>
 <body>
   <div id="mocha"></div>
 
+  <!-- Load local lib and tests. -->
+  <script src="../src/all.js"></script>
   <script type="text/javascript" src="allspecs.js"></script>
 </body>
 </html>

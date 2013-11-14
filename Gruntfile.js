@@ -24,7 +24,7 @@ module.exports = function (grunt) {
         stripBanners: true
       },
       sources: {
-        src: ['src/data.js', 'src/cities-map.js'],
+        src: ['src/data.js', 'src/mapapi.js', 'src/cities-map.js'],
         dest: 'src/all.js'
       },
       dist: {
@@ -54,10 +54,11 @@ module.exports = function (grunt) {
         src: 'Gruntfile.js'
       },
       src: {
+        src: ['src/**/*.js'],
         options: {
-          jshintrc: 'src/.jshintrc'
-        },
-        src: ['src/**/*.js']
+          jshintrc: 'src/.jshintrc',
+          ignores: ['src/all.js']
+        }
       },
       test: {
       }

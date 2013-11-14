@@ -4,40 +4,92 @@
 /*! cities-map - v0.0.1 - 2013-11-13
 * https://github.com/TheDahv/cities-map
 * Copyright (c) 2013 David Pierce; Licensed MIT */
-var root = window;
-var CitiesMap = root.CitiesMap = ( root.CitiesMap || {} );
+(function (root, $) {
+  var CitiesMap = root.CitiesMap = ( root.CitiesMap || {} );
 
-/**
- * CitiesMap.Data
- *
- * A module to manage all functions related to getting data out of the API
- */
-var Data = CitiesMap.Data = {};
-var $ = jQuery;
+  /**
+   * CitiesMap.Data
+   *
+   * A module to manage all functions related to getting data out of the API
+   */
+  var Data = CitiesMap.Data = {};
 
-/*
- * loadCitiesData
- *
- * Helps clients load data from the SWOOP API.
- *
- * Takes an options object to specify customizations to the query behavior. Possible options are:
- *    * urlBase - Without a trailing slash, specifies the source of the API provider
- *
- * Returns a jQuery deferred object that can call a success or error function upon fulfillment of the computation
- */
-Data.loadCitiesData = function (opts) {
-  var defaultOptions, options;
+  /*
+   * loadCitiesData
+   *
+   * Helps clients load data from the SWOOP API.
+   *
+   * Takes an options object to specify customizations to the query behavior. Possible options are:
+   *    * urlBase - Without a trailing slash, specifies the source of the API provider
+   *
+   * Returns a jQuery deferred object that can call a success or error function upon fulfillment of the computation
+   */
+  Data.loadCitiesData = function (opts) {
+    var defaultOptions, options;
 
-  opts = opts || {};
+    opts = opts || {};
 
-  defaultOptions = {
-    urlBase: 'http://swoop.startupweekend.org'
+    defaultOptions = {
+      urlBase: 'http://swoop.startupweekend.org'
+    };
+
+    options = $.extend(defaultOptions, opts);
+
+    return $.get('' + options.urlBase + '/cities');
+  };
+})(window, jQuery);
+;(function (root) {
+  var google = window.google;
+  var maps;
+  var CitiesMap = root.CitiesMap = ( root.CitiesMap || {} );
+
+  /**
+   * CitiesMap.MapApi - Google Maps Implementation
+   *
+   * A module to hide away all interaction with the Google Maps API.
+   *
+   * Full of functions with side effects that manipulate the map in the DOM
+   */
+  var MapApi = CitiesMap.MapApi = function (mapContainer, mapOptions) {
+    this.mapContainer = mapContainer;
+    this.options = mapOptions || {};
+
+    this.writeMapToElement();
+
+    return this;
   };
 
-  options = $.extend(defaultOptions, opts);
+  if (google && google.maps) {
+    maps = google.maps;
+  } else {
+    maps = undefined;
+  }
 
-  return $.get('' + options.urlBase + '/cities');
-};
+  if (typeof maps === 'undefined') {
+   window.alert('The Google Maps API is not available at this time.' +
+    ' Please try again later');
+  } else {
+
+    MapApi.prototype.writeMapToElement = function () {
+      var desiredHeight, desiredWidth,
+          mapOptions = this.options,
+          $element = this.mapContainer;
+
+      mapOptions    = mapOptions || {};
+      desiredWidth  = mapOptions.width  || $element.data('width')  || 600;
+      desiredHeight = mapOptions.height || $element.data('height') || 400;
+
+      mapOptions.center = new maps.LatLng(-34.397, 150.644);
+      mapOptions.zoom = 8;
+      mapOptions.mapTypeId = maps.MapTypeId.ROADMAP;
+
+      $element.css('width', desiredWidth);
+      $element.css('height', desiredHeight);
+
+      return new maps.Map($element[0], mapOptions);
+    };
+  }
+})(window);
 ;(function ($, CitiesMap) {
   var Data = CitiesMap.Data;
 
@@ -50,23 +102,8 @@ Data.loadCitiesData = function (opts) {
       window.alert(errorMsg);
     });
 
-    data.success(function (cities) {
-      cities.forEach(function (city) { window.console.log(city); });
-      mapContainer.html(
-        "<ul>" +
-        cities
-          .filter(function (city) { return city.upcoming_programs.length > 0; })
-          .map(function (city) { return "<li>" +
-            city.city +
-            " &ndash; " +
-            city.upcoming_programs[0].events[0].website +
-            " &ndash; " +
-            (new Date(city.upcoming_programs[0].events[0].start_date)).toDateString() +
-            "</li>";
-          })
-          .join('') +
-        "</ul>"
-      );
+    data.success(function () {
+      new CitiesMap.MapApi(mapContainer);
     });
   };
 
