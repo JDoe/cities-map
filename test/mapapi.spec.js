@@ -13,7 +13,20 @@ describe('CitiesMap.MapApi', function () {
 
       gMapsStub = {
         Map: sinon.spy(google.maps, 'Map'),
-        Marker: sinon.spy(google.maps, 'Marker'),
+        Marker: sinon.stub(google.maps, 'Marker', function () {
+          return {
+            on: function (event, func) {
+                  this.func = func;
+                },
+            trigger: function () {
+                       this.func({
+                         target: {}
+                        , stop: function () {}
+                       });
+                 }
+
+          };
+        }),
         LatLng: sinon.spy(google.maps, 'LatLng')
       };
 
@@ -55,6 +68,14 @@ describe('CitiesMap.MapApi', function () {
         instance.mapPoints.length.should.eq(0);
         instance.createCityPoint({ location: [100, 100] });
         instance.mapPoints.length.should.eq(1);
+      });
+
+      it('should bind #showCityInfo to click event when clicked', function () {
+        var showCityInfoSpy = sinon.spy(instance, 'showCityInfo');
+        var marker = instance.createCityPoint({ location: [100, 100] });
+        marker.trigger('click');
+
+        showCityInfoSpy.calledOnce.should.be.true;
       });
     });
   });

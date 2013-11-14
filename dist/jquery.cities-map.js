@@ -98,11 +98,19 @@
         position: new maps.LatLng(city.location[0], city.location[1])
       });
 
+      marker.on('click', this.showCityInfo);
+
       this.mapPoints.push(marker);
 
       return marker;
     };
   }
+
+  MapApi.prototype.showCityInfo = function (markerClickEvent) {
+    var marker = markerClickEvent.target;
+    markerClickEvent.stop();
+    return marker;
+  };
 })(window);
 ;(function ($, CitiesMap) {
   var Data = CitiesMap.Data;

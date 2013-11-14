@@ -28,11 +28,14 @@
           ROADMAP: 1
         }
       , Map: function () { return {}; }
-      , Marker: function () { return {}; }
+      , Marker: function () {
+        return {
+          on: function () {}
+        };
+      }
       , LatLng: function () { return {}; }
       }
     }
-    // window.mapsStub = sinon.stub(google.maps, 'LatLng').returns({});
   </script>
 </head>
 <body>
