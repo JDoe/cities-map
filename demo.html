@@ -6,7 +6,10 @@
 
 </head>
 <body>
-  <div id="mapArea">
+  <div id="mapArea"
+    data-width=1000
+    data-height=600
+    >
   </div>
   <script type="text/javascript"
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD4YeGO1Wf7uq7ciTAHctRoNwCqQ3r5EhQ&sensor=false">
@@ -16,7 +19,9 @@
   <script src="dist/jquery.cities-map.js"></script>
   <script type="text/javascript">
     $(function () {
-      $('#mapArea').citiesmap();
+        $('#mapArea').citiesmap({
+          urlBase: 'http://localhost:3000'
+        });
     });
   </script>
 </body>

@@ -10,17 +10,21 @@
   var Data = CitiesMap.Data;
 
   // Collection method.
-  $.fn.citiesmap = function () {
+  $.fn.citiesmap = function (opts) {
     var mapContainer = $(this);
 
-    var data = Data.loadCitiesData();
+    var data = Data.loadCitiesData(opts);
     data.error(function (errorMsg) {
       window.alert(errorMsg);
     });
 
     data.success(function (cities) {
-      var map = new CitiesMap.MapApi(mapContainer);
-      cities.forEach(map.createCityPoint);
+      var map     = new CitiesMap.MapApi(mapContainer, opts),
+          handler = map.getMarkerShowHandler();
+
+      cities.forEach(function (city) {
+        map.createCityPoint.call(map, city, handler);
+      });
     });
   };
 
