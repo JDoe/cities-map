@@ -98,15 +98,34 @@ describe('CitiesMap.MapApi', function () {
             eventStub,
             markerStub,
             setContentSpy,
-            openSpy;
+            openSpy,
+            getContentSpy;
 
         beforeEach(function () {
           generatedHandler = instance.getMarkerShowHandler();
+          getContentSpy = sinon.spy(instance, 'getCityInfoWindowContent');
 
           eventStub = { stop: function () {} };
           markerStub = { '__gm_id': 1 };
           instance.mapPoints = {
-            1: { city: 'Test City' }
+            1: {
+              city: 'Test City',
+              upcoming_programs: [
+                {
+                  "event_type" : "Startup Weekend",
+                  "events" : [
+                    {
+                      "vertical" : "",
+                      "public_registration_url" : "http:\/\/www.eventbrite.com\/event\/7861362547",
+                      "website" : "paris.startupweekend.org",
+                      "_id" : "5276e3936e401802000002ca",
+                      "start_date" : "2013-11-22T00:00:00.000Z",
+                      "event_type" : "Startup Weekend"
+                    }
+                  ]
+                }
+              ]
+            }
           };
 
           setContentSpy = sinon.spy(instance.infoWindowInstance, 'setContent'),
@@ -124,6 +143,49 @@ describe('CitiesMap.MapApi', function () {
           openSpy.calledOnce.should.be.true;
           openSpy.calledWith(instance.mapRef, markerStub);
         });
+
+        it('should call #getCityInfoWindowContent', function () {
+          generatedHandler.call(markerStub, eventStub);
+          getContentSpy.calledOnce.should.be.true;
+          getContentSpy.calledWith(instance.mapPoints[1]).should.be.true;
+        });
+      });
+    });
+
+    describe('#getCityInfoWindowContent', function () {
+      var sampleCityData = {
+        "upcoming_programs" : [
+          {
+            "event_type" : "Startup Weekend",
+            "events" : [
+              {
+                "vertical" : "",
+                "public_registration_url" : "http:\/\/www.eventbrite.com\/event\/7861362547",
+                "website" : "paris.startupweekend.org",
+                "_id" : "5276e3936e401802000002ca",
+                "start_date" : "2013-11-22T00:00:00.000Z",
+                "event_type" : "Startup Weekend"
+              }
+            ]
+          }
+        ],
+        "state" : null,
+        "region" : "Europe",
+        "city" : "Paris",
+        "location" : [
+          48.8666667,
+          2.3333333
+        ],
+        "country" : "France"
+      };
+
+      it('should be a function', function () {
+        instance.should.have.property('getCityInfoWindowContent');
+        instance.getCityInfoWindowContent.should.be.a('function');
+      });
+
+      it('should return a string', function () {
+        instance.getCityInfoWindowContent(sampleCityData).should.be.a('string');
       });
     });
   });

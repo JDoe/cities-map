@@ -119,7 +119,7 @@
           markerId   = marker.__gm_id,
           cityData   = self.mapPoints[markerId];
 
-      infoWindow.setContent('' + cityData.city);
+      infoWindow.setContent(self.getCityInfoWindowContent(cityData));
 
       // Open the info window over the clicked marker
       infoWindow.open(map, marker);
@@ -128,5 +128,36 @@
 
       return false;
     };
+  };
+
+  /**
+   * Given a city object with data from the API, return an HTML string to
+   * display for the map info window
+   */
+  MapApi.prototype.getCityInfoWindowContent = function (city) {
+    var payload = "" + 
+      "<h1>" + city.city + "</h1>";
+
+    // Loop through programs and add them to the window
+    payload += city.upcoming_programs.map(function (program) {
+      var programContent = "";
+
+      programContent += "<h2>Upcoming for " + program.event_type + "</h2>";
+      programContent += "<ul>";
+      programContent += program.events.map(function (programEvent) {
+        return "<li>" +
+            "<a href='" + programEvent.public_registration_url + "' target='_blank'>" +
+              (programEvent.vertical.length > 0  ? (programEvent.vertical + ' ') : '') +
+              programEvent.start_date +
+            "</a>" +
+          "</li>";
+      }).join('');
+
+      programContent += "</ul>";
+
+      return programContent;
+    }).join('');
+
+    return payload;
   };
 })(window);
