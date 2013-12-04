@@ -135,8 +135,8 @@
    * display for the map info window
    */
   MapApi.prototype.getCityInfoWindowContent = function (city) {
-    var payload = "" + 
-      "<h1>" + city.city + "</h1>";
+    var self = this,
+        payload = "<h1>" + city.city + "</h1>";
 
     // Loop through programs and add them to the window
     payload += city.upcoming_programs.map(function (program) {
@@ -145,10 +145,11 @@
       programContent += "<h2>Upcoming for " + program.event_type + "</h2>";
       programContent += "<ul>";
       programContent += program.events.map(function (programEvent) {
+        var formattedDate = self.formatDateString(programEvent.start_date);
         return "<li>" +
             "<a href='" + programEvent.public_registration_url + "' target='_blank'>" +
               (programEvent.vertical.length > 0  ? (programEvent.vertical + ' ') : '') +
-              programEvent.start_date +
+              formattedDate +
             "</a>" +
           "</li>";
       }).join('');
@@ -159,5 +160,56 @@
     }).join('');
 
     return payload;
+  };
+
+  MapApi.prototype.formatDateString = function (date) {
+    var mon;
+    if (typeof date === 'string') {
+      date = new Date(date);
+    }
+
+    switch(date.getUTCMonth()) {
+      case 0:
+        mon = "January";
+        break;
+      case 1:
+        mon = "February";
+        break;
+      case 2:
+        mon = "March";
+        break;
+      case 3:
+        mon = "April";
+        break;
+      case 4:
+        mon = "May";
+        break;
+      case 5:
+        mon = "June";
+        break;
+      case 6:
+        mon = "July";
+        break;
+      case 7:
+        mon = "August";
+        break;
+      case 8:
+        mon = "September";
+        break;
+      case 9:
+        mon = "October";
+        break;
+      case 10:
+        mon = "November";
+        break;
+      case 11:
+        mon = "December";
+        break;
+      default:
+        mon = "";
+        break;
+    }
+
+    return date.getUTCDate() + " " + mon + ", " + date.getUTCFullYear();
   };
 })(window);

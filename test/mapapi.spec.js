@@ -99,12 +99,13 @@ describe('CitiesMap.MapApi', function () {
             markerStub,
             setContentSpy,
             openSpy,
-            getContentSpy;
+            getContentSpy,
+            dateSpy;
 
         beforeEach(function () {
           generatedHandler = instance.getMarkerShowHandler();
           getContentSpy = sinon.spy(instance, 'getCityInfoWindowContent');
-
+          dateSpy = sinon.stub(instance, 'formatDateString').returns('');
           eventStub = { stop: function () {} };
           markerStub = { '__gm_id': 1 };
           instance.mapPoints = {
@@ -132,8 +133,16 @@ describe('CitiesMap.MapApi', function () {
           openSpy = sinon.spy(instance.infoWindowInstance, 'open');
         });
 
-        it('should call #setContent on the infoWindow instance reference', function () {
+        afterEach(function () {
+          var prop;
+          for(prop in instance) {
+            if (instance.hasOwnProperty(prop) && instance[prop].restore) {
+              instance[prop].restore();
+            }
+          }
+        });
 
+        it('should call #setContent on the infoWindow instance reference', function () {
           generatedHandler.call(markerStub, eventStub);
           setContentSpy.calledOnce.should.be.true;
         });
@@ -153,31 +162,40 @@ describe('CitiesMap.MapApi', function () {
     });
 
     describe('#getCityInfoWindowContent', function () {
-      var sampleCityData = {
-        "upcoming_programs" : [
-          {
-            "event_type" : "Startup Weekend",
-            "events" : [
+      var dateSpy,
+          sampleCityData = {
+            "upcoming_programs" : [
               {
-                "vertical" : "",
-                "public_registration_url" : "http:\/\/www.eventbrite.com\/event\/7861362547",
-                "website" : "paris.startupweekend.org",
-                "_id" : "5276e3936e401802000002ca",
-                "start_date" : "2013-11-22T00:00:00.000Z",
-                "event_type" : "Startup Weekend"
+                "event_type" : "Startup Weekend",
+                "events" : [
+                  {
+                    "vertical" : "",
+                    "public_registration_url" : "http:\/\/www.eventbrite.com\/event\/7861362547",
+                    "website" : "paris.startupweekend.org",
+                    "_id" : "5276e3936e401802000002ca",
+                    "start_date" : "2013-11-22T00:00:00.000Z",
+                    "event_type" : "Startup Weekend"
+                  }
+                ]
               }
-            ]
-          }
-        ],
-        "state" : null,
-        "region" : "Europe",
-        "city" : "Paris",
-        "location" : [
-          48.8666667,
-          2.3333333
-        ],
-        "country" : "France"
-      };
+            ],
+            "state" : null,
+            "region" : "Europe",
+            "city" : "Paris",
+            "location" : [
+              48.8666667,
+              2.3333333
+            ],
+            "country" : "France"
+          };
+
+      beforeEach(function () {
+        dateSpy = sinon.stub(instance, 'formatDateString').returns('');
+      });
+
+      afterEach(function () {
+        instance.formatDateString.restore();
+      });
 
       it('should be a function', function () {
         instance.should.have.property('getCityInfoWindowContent');
@@ -187,6 +205,38 @@ describe('CitiesMap.MapApi', function () {
       it('should return a string', function () {
         instance.getCityInfoWindowContent(sampleCityData).should.be.a('string');
       });
+
+      it('should call #formatDateString', function () {
+        instance.getCityInfoWindowContent(sampleCityData);
+        dateSpy.calledOnce.should.be.true;
+      });
     });
+
+    describe('#formatDateString', function () {
+      it('should be a function', function () {
+        instance.should.have.property('formatDateString');
+        instance.formatDateString.should.be.a('function');
+      });
+
+      it('should return a string', function () {
+        instance.formatDateString(new Date()).should.be.a('string');
+      });
+
+      it('should format a date in DD MMM, YYYY format', function () {
+        instance.formatDateString(new Date(2013, 0, 1)).should.eq('1 January, 2013');
+        instance.formatDateString(new Date(2013, 1, 1)).should.eq('1 February, 2013');
+        instance.formatDateString(new Date(2013, 2, 1)).should.eq('1 March, 2013');
+        instance.formatDateString(new Date(2013, 3, 1)).should.eq('1 April, 2013');
+        instance.formatDateString(new Date(2013, 4, 1)).should.eq('1 May, 2013');
+        instance.formatDateString(new Date(2013, 5, 1)).should.eq('1 June, 2013');
+        instance.formatDateString(new Date(2013, 6, 1)).should.eq('1 July, 2013');
+        instance.formatDateString(new Date(2013, 7, 1)).should.eq('1 August, 2013');
+        instance.formatDateString(new Date(2013, 8, 1)).should.eq('1 September, 2013');
+        instance.formatDateString(new Date(2013, 9, 1)).should.eq('1 October, 2013');
+        instance.formatDateString(new Date(2013, 10, 1)).should.eq('1 November, 2013');
+        instance.formatDateString(new Date(2013, 11, 1)).should.eq('1 December, 2013');
+      });
+    });
+
   });
 });
