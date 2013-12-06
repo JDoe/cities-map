@@ -269,6 +269,62 @@ describe('CitiesMap.MapApi', function () {
           });
         });
       });
+
+      describe('generating an interest notification form', function () {
+        it('should open the signup result in a new tab', function () {
+          var windowText = instance.getCityInfoWindowContent(sampleCityData);
+          windowText.should.match(/form.+target='_blank'/);
+        });
+
+        it('should offer a form for registering interest in SW', function () {
+          var windowContent = instance.getCityInfoWindowContent(sampleCityData);
+          var formTargetRx = /form action='http:\/\/startupweekend.us1.list-manage.com\/subscribe\/post\?u=77bee8d6876e3fd1aa815badb&amp;id=66eed7c427'/;
+          var formCityRx = /name='CITY' value='Paris'/;
+          var formEventTypeRx = /name='MMERGE3' value='Startup Weekend'/;
+          var formVerticalTypeRx = /name='MMERGE4' value=''/;
+          windowContent.should.match(formTargetRx);
+          windowContent.should.match(formEventTypeRx);
+          windowContent.should.match(formVerticalTypeRx);
+        });
+
+        it('should offer a form for registering interest in SW Makers', function () {
+          var makerCityData = {
+            "upcoming_programs" : [
+              {
+                "event_type" : "Startup Weekend",
+                "events" : [
+                  {
+                    "vertical" : "Makers",
+                    "public_registration_url" : "http:\/\/www.eventbrite.com\/event\/7861362547",
+                    "website" : "paris.startupweekend.org",
+                    "_id" : "5276e3936e401802000002ca",
+                    "start_date" : "2013-11-22T00:00:00.000Z",
+                    "event_type" : "Startup Weekend"
+                  }
+                ]
+              }
+            ],
+            "state" : null,
+            "region" : "Europe",
+            "city" : "Paris",
+            "location" : [
+              48.8666667,
+              2.3333333
+            ],
+            "country" : "France"
+          };
+
+          var windowContent = instance.getCityInfoWindowContent(makerCityData);
+
+          var formTargetRx = /form action='http:\/\/startupweekend.us1.list-manage.com\/subscribe\/post\?u=77bee8d6876e3fd1aa815badb&amp;id=66eed7c427'/;
+          var formCityRx = /name='CITY' value='Paris'/;
+          var formEventTypeRx = /name='MMERGE3' value='Startup Weekend'/;
+          var formVerticalTypeRx = /name='MMERGE4' value='Makers'/;
+          windowContent.should.match(formTargetRx);
+          windowContent.should.match(formEventTypeRx);
+          windowContent.should.match(formVerticalTypeRx);
+        });
+      });
     });
 
     describe('#formatDateString', function () {

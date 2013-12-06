@@ -40,6 +40,7 @@
 })(window, jQuery);
 ;(function (root) {
   var google = window.google;
+  var $ = window.jQuery;
   var maps;
   var CitiesMap = root.CitiesMap = ( root.CitiesMap || {} );
 
@@ -51,10 +52,13 @@
    * Full of functions with side effects that manipulate the map in the DOM
    */
   var MapApi = CitiesMap.MapApi = function (mapContainer, mapOptions) {
-    this.mapContainer = mapContainer;
-    this.options      = mapOptions || {
-      programsOfInterest: []
+    var configDefaults = {
+      programsOfInterest: [],
+      notificationUrl: 'http://startupweekend.us1.list-manage.com/subscribe/post?u=77bee8d6876e3fd1aa815badb&amp;id=66eed7c427'
     };
+
+    this.mapContainer = mapContainer;
+    this.options      = $.extend(configDefaults, (mapOptions || {}));
 
     this.mapRef       = null;
     this.mapPoints    = {};
@@ -216,7 +220,7 @@
         infoUrl = /^https?\:\/\//.test(programEvent.website) ? program.website : 'http://' + programEvent.website;
         registrationUrl = /^https?:\/\//.test(programEvent.public_registration_url) ? programEvent.public_registration_url : 'http://' + programEvent.public_registration_url;
 
-        return "<div class='event-row'><p class='e vent-row__date'>" +
+        return "<div class='event-row'><p class='event-row__date'>" +
             formattedDate +
               (programEvent.vertical.length > 0 ? (' - ' + programEvent.vertical) : '') + "</p>" +
               "<span class='event-row__form-controls'><a href='" + infoUrl + "'>More Info</a></span>" +
@@ -224,8 +228,11 @@
               "<label for='" + formId + "' class='event-row__notification-trigger'>Future event alerts</label>" +
               "<input id='" + formId + "' type='checkbox' class='event-row__activate-form' />" +
               "<div class='event-row__form-target'>" +
-              "<form action='#' method='POST'>" +
-              "<input type='text' /><input type='submit' value='Subscribe' />" +
+              "<form action='" + self.options.notificationUrl + "' method='POST' target='_blank'>" +
+              "<input type='hidden' name='CITY' value='" + city.city + "' />" +
+              "<input type='hidden' name='MMERGE3' value='" + program.event_type + "' />" +
+              "<input type='hidden' name='MMERGE4' value='" + programEvent.vertical + "' />" +
+              "<input type='text' name='EMAIL' /><input type='submit' name='Subscribe' value='Subscribe' />" +
               "</form></div>" +
             "</div>";
       }).join('');
