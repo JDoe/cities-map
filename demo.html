@@ -4,6 +4,50 @@
   <meta charset="UTF-8">
   <title></title>
 
+  <style type="text/css">
+    .sw-cities-map input[type=checkbox] {
+      visibility: hidden;
+    }
+
+    .sw-cities-map .event-row {
+      border-bottom: 1px solid #e1e1e1;
+    }
+    .sw-cities-map .event-row:last-child {
+      border-bottom: none;
+    }
+
+    .sw-cities-map .event-row__notification-trigger {
+      color: green;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    .sw-cities-map .event-row__form-controls:after {
+      content: ' | ';
+    }
+
+    .sw-cities-map .event-row__form-target {
+      display: block;
+      height: 0; 
+      opacity: 0;
+      overflow: hidden;
+
+      transition: height 0.4s ease-in;
+    }
+
+    .sw-cities-map .event-row__activate-form:checked + .event-row__form-target { 
+      display: block;
+      height: 1.5em;
+      opacity: 1;
+
+      font-size: 2em;
+    }
+
+    .gm-style-iw {
+      padding-bottom: 4em;
+    }
+  </style>
+
 </head>
 <body>
   <div id="mapArea"

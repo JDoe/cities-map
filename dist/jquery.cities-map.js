@@ -1,7 +1,7 @@
-/*! cities-map - v0.0.1 - 2013-12-04
+/*! cities-map - v0.0.1 - 2013-12-06
 * https://github.com/TheDahv/cities-map
 * Copyright (c) 2013 David Pierce; Licensed MIT */
-/*! cities-map - v0.0.1 - 2013-12-04
+/*! cities-map - v0.0.1 - 2013-12-06
 * https://github.com/TheDahv/cities-map
 * Copyright (c) 2013 David Pierce; Licensed MIT */
 (function (root, $) {
@@ -52,7 +52,10 @@
    */
   var MapApi = CitiesMap.MapApi = function (mapContainer, mapOptions) {
     this.mapContainer = mapContainer;
-    this.options      = mapOptions || {};
+    this.options      = mapOptions || {
+      programsOfInterest: []
+    };
+
     this.mapRef       = null;
     this.mapPoints    = {};
 
@@ -176,29 +179,61 @@
    */
   MapApi.prototype.getCityInfoWindowContent = function (city) {
     var self = this,
-        payload = "<h1>" + city.city + "</h1>";
+        payload = "<div class='sw-cities-map'>",
+        desiredPrograms = [],
+        programsOfInterest = self.options.programsOfInterest;
+
+    // Filter down to the desired programs to render on the map
+    if (programsOfInterest.length === 0) {
+      // No program preference specified, so show all programs
+      desiredPrograms = city.upcoming_programs;
+    } else {
+      desiredPrograms = city.upcoming_programs.filter(function (program) {
+        // Leverage bitwise magic to detect presence in array
+        return ~(programsOfInterest.indexOf(program.event_type));
+      });
+    }
 
     // Loop through programs and add them to the window
-    payload += city.upcoming_programs.map(function (program) {
+    payload += desiredPrograms.map(function (program) {
       var programContent = "";
 
-      programContent += "<h2>Upcoming for " + program.event_type + "</h2>";
-      programContent += "<ul>";
-      programContent += program.events.map(function (programEvent) {
-        var formattedDate = self.formatDateString(programEvent.start_date);
-        return "<li>" +
-            "<a href='" + programEvent.public_registration_url + "' target='_blank'>" +
-              (programEvent.vertical.length > 0  ? (programEvent.vertical + ' ') : '') +
-              formattedDate +
-            "</a>" +
-          "</li>";
-      }).join('');
+      programContent += "<h1>" + program.event_type + " " + city.city + "</h1>";
 
-      programContent += "</ul>";
+      programContent += program.events.map(function (programEvent) {
+        var formattedDate = self.formatDateString(programEvent.start_date),
+          infoUrl,
+          registrationUrl,
+          formId;
+
+        // Unique identifier for this row
+        // Borrowed from http://stackoverflow.com/a/2117523
+        formId = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+          var r = Math.random()*16|0, v = (c === 'x' ? r : (r&0x3|0x8));
+          return v.toString(16);
+        });
+
+        infoUrl = /^https?\:\/\//.test(programEvent.website) ? program.website : 'http://' + programEvent.website;
+        registrationUrl = /^https?:\/\//.test(programEvent.public_registration_url) ? programEvent.public_registration_url : 'http://' + programEvent.public_registration_url;
+
+        return "<div class='event-row'><p class='e vent-row__date'>" +
+            formattedDate +
+              (programEvent.vertical.length > 0 ? (' - ' + programEvent.vertical) : '') + "</p>" +
+              "<span class='event-row__form-controls'><a href='" + infoUrl + "'>More Info</a></span>" +
+              "<span class='event-row__form-controls'><a href='" + registrationUrl + "'>Sign up</a></span>" +
+              "<label for='" + formId + "' class='event-row__notification-trigger'>Future event alerts</label>" +
+              "<input id='" + formId + "' type='checkbox' class='event-row__activate-form' />" +
+              "<div class='event-row__form-target'>" +
+              "<form action='#' method='POST'>" +
+              "<input type='text' /><input type='submit' value='Subscribe' />" +
+              "</form></div>" +
+            "</div>";
+      }).join('');
 
       return programContent;
     }).join('');
 
+    payload += "</div>";
     return payload;
   };
 
