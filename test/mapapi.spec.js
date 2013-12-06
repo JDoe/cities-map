@@ -1,3 +1,8 @@
+var fakeElement = {
+  data: function () { return undefined; }
+, css: function () { return 0; }
+};
+
 describe('CitiesMap.MapApi', function () {
   it('should make the constructor available', function () {
     CitiesMap.MapApi.should.exist.and.be.a('function');
@@ -6,10 +11,6 @@ describe('CitiesMap.MapApi', function () {
   describe('expected constructor result', function () {
     var instance, gMapsStub;
     beforeEach(function () {
-      var fakeElement = {
-        data: function () { return undefined; }
-      , css: function () { return 0; }
-      };
 
       gMapsStub = {
         Map: sinon.spy(google.maps, 'Map'),
@@ -177,6 +178,19 @@ describe('CitiesMap.MapApi', function () {
                     "event_type" : "Startup Weekend"
                   }
                 ]
+              },
+              {
+                "event_type" : "NEXT",
+                "events" : [
+                  {
+                    "vertical" : "",
+                    "public_registration_url" : "http:\/\/www.eventbrite.com\/event\/7861362547",
+                    "website" : "paris.startupweekend.org",
+                    "_id" : "5276e3936e401802000002ca",
+                    "start_date" : "2013-11-22T00:00:00.000Z",
+                    "event_type" : "Startup Weekend"
+                  }
+                ]
               }
             ],
             "state" : null,
@@ -200,7 +214,7 @@ describe('CitiesMap.MapApi', function () {
       it('should be a function', function () {
         instance.should.have.property('getCityInfoWindowContent');
         instance.getCityInfoWindowContent.should.be.a('function');
-      });
+    });
 
       it('should return a string', function () {
         instance.getCityInfoWindowContent(sampleCityData).should.be.a('string');
@@ -208,7 +222,52 @@ describe('CitiesMap.MapApi', function () {
 
       it('should call #formatDateString', function () {
         instance.getCityInfoWindowContent(sampleCityData);
-        dateSpy.calledOnce.should.be.true;
+        dateSpy.calledTwice.should.be.true;
+      });
+
+      describe('handling preferred programs', function () {
+        describe('when no program specified', function () {
+          it('should render all available programs in the window', function () {
+            var windowText = instance.getCityInfoWindowContent(sampleCityData);
+            windowText.should.match(/Startup Weekend Paris/);
+            windowText.should.match(/NEXT Paris/);
+          });
+        });
+
+        describe('when only Startup Weekend specified', function () {
+          it('should only render Startup Weekend events', function () {
+            var swInstance = new CitiesMap.MapApi(fakeElement, {
+              programsOfInterest: ['Startup Weekend']
+            });
+
+            var windowText = swInstance.getCityInfoWindowContent(sampleCityData);
+            windowText.should.match(/Startup Weekend Paris/);
+            windowText.should.not.match(/NEXT Paris/);
+          });
+        });
+
+        describe('when only NEXT is specified', function () {
+          it('should only render NEXT events', function () {
+            var nextInstance = new CitiesMap.MapApi(fakeElement, {
+              programsOfInterest: ['NEXT']
+            });
+
+            var windowText = nextInstance.getCityInfoWindowContent(sampleCityData);
+            windowText.should.match(/NEXT Paris/);
+            windowText.should.not.match(/Startup Weekend Paris/);
+          });
+        });
+
+        describe('when both Startup Weekend and NEXT are specified', function () {
+          it('should render events for both programs', function () {
+            var multipleInstance = new CitiesMap.MapApi(fakeElement, {
+              programsOfInterest: ['Startup Weekend', 'NEXT']
+            });
+            var windowText = multipleInstance.getCityInfoWindowContent(sampleCityData);
+            windowText.should.match(/Startup Weekend Paris/);
+            windowText.should.match(/NEXT Paris/);
+          });
+        });
       });
     });
 

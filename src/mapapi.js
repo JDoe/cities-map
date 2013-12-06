@@ -12,7 +12,10 @@
    */
   var MapApi = CitiesMap.MapApi = function (mapContainer, mapOptions) {
     this.mapContainer = mapContainer;
-    this.options      = mapOptions || {};
+    this.options      = mapOptions || {
+      programsOfInterest: []
+    };
+
     this.mapRef       = null;
     this.mapPoints    = {};
 
@@ -137,9 +140,22 @@
   MapApi.prototype.getCityInfoWindowContent = function (city) {
     var self = this,
         payload = "<h1>" + city.city + "</h1>";
+        desiredPrograms = [],
+        programsOfInterest = self.options.programsOfInterest;
+
+    // Filter down to the desired programs to render on the map
+    if (programsOfInterest.length === 0) {
+      // No program preference specified, so show all programs
+      desiredPrograms = city.upcoming_programs;
+    } else {
+      desiredPrograms = city.upcoming_programs.filter(function (program) {
+        // Leverage bitwise magic to detect presence in array
+        return ~(programsOfInterest.indexOf(program.event_type));
+      });
+    }
 
     // Loop through programs and add them to the window
-    payload += city.upcoming_programs.map(function (program) {
+    payload += desiredPrograms.map(function (program) {
       var programContent = "";
 
       programContent += "<h2>Upcoming for " + program.event_type + "</h2>";
