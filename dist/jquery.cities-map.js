@@ -238,9 +238,33 @@
   };
 
   MapApi.prototype.formatDateString = function (date) {
-    var mon;
+    var day, mon;
     if (typeof date === 'string') {
       date = new Date(date);
+    }
+    
+    switch(date.getUTCDay()) {
+      case 0:
+        day = "Monday";
+        break;
+      case 1:
+        day = "Tuesday";
+        break;
+      case 2:
+        day = "Wednesday";
+        break;
+      case 3:
+        day = "Thursday";
+        break;
+      case 4:
+        day = "Friday";
+        break;
+      case 5:
+        day = "Saturday";
+        break;
+      case 6:
+        day = "Sunday";
+        break;
     }
 
     switch(date.getUTCMonth()) {
@@ -285,7 +309,7 @@
         break;
     }
 
-    return date.getUTCDate() + " " + mon + ", " + date.getUTCFullYear();
+    return day + ", " + mon + " " + date.getUTCDate();
   };
 })(window);
 ;(function ($, CitiesMap) {
