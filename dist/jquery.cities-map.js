@@ -1,7 +1,7 @@
-/*! cities-map - v0.0.1 - 2013-12-06
+/*! cities-map - v0.0.1 - 2013-12-09
 * https://github.com/TheDahv/cities-map
 * Copyright (c) 2013 David Pierce; Licensed MIT */
-/*! cities-map - v0.0.1 - 2013-12-06
+/*! cities-map - v0.0.1 - 2013-12-09
 * https://github.com/TheDahv/cities-map
 * Copyright (c) 2013 David Pierce; Licensed MIT */
 (function (root, $) {
@@ -57,8 +57,19 @@
       notificationUrl: 'http://startupweekend.us1.list-manage.com/subscribe/post?u=77bee8d6876e3fd1aa815badb&amp;id=66eed7c427'
     };
 
-    this.mapContainer = mapContainer;
-    this.options      = $.extend(configDefaults, (mapOptions || {}));
+    this.mapContainer  = mapContainer;
+    this.options       = $.extend(configDefaults, (mapOptions || {}));
+    this.knownPrograms = [
+      "Bootcamp",
+      "LeanStartup",
+      "Marketing",
+      "Meetup",
+      "NEXT",
+      "SW Corporate",
+      "Social",
+      "Startup Weekend",
+      "Summit"
+    ];
 
     this.mapRef       = null;
     this.mapPoints    = {};
@@ -184,64 +195,97 @@
   MapApi.prototype.getCityInfoWindowContent = function (city) {
     var self = this,
         payload = "<div class='sw-cities-map'>",
-        desiredPrograms = [],
         programsOfInterest = self.options.programsOfInterest;
 
     // Filter down to the desired programs to render on the map
     if (programsOfInterest.length === 0) {
-      // No program preference specified, so show all programs
-      desiredPrograms = city.upcoming_programs;
-    } else {
-      desiredPrograms = city.upcoming_programs.filter(function (program) {
-        // Leverage bitwise magic to detect presence in array
-        return ~(programsOfInterest.indexOf(program.event_type));
-      });
+      programsOfInterest = self.knownPrograms;
     }
 
-    // Loop through programs and add them to the window
-    payload += desiredPrograms.map(function (program) {
+    payload += programsOfInterest.map(function (program) {
+      // Loop through programs and add them to the window
       var programContent = "";
+      var programData = null;
+      var formId;
 
-      programContent += "<h1>" + program.event_type + " " + city.city + "</h1>";
+      city.upcoming_programs.some(function (apiProgram) {
+        if (apiProgram.event_type === program) {
+          programData = apiProgram;
+          return true;
+        } else {
+          return false;
+        }
+      });
 
-      programContent += program.events.map(function (programEvent) {
-        var formattedDate = self.formatDateString(programEvent.start_date),
-          infoUrl,
-          registrationUrl,
-          formId;
+      programContent += "<h1>" + program + " " + city.city + "</h1>";
 
-        // Unique identifier for this row
-        // Borrowed from http://stackoverflow.com/a/2117523
-        formId = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-          var r = Math.random()*16|0, v = (c === 'x' ? r : (r&0x3|0x8));
-          return v.toString(16);
-        });
+      // Unique identifier for this row
+      // Borrowed from http://stackoverflow.com/a/2117523
+      formId = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = Math.random()*16|0, v = (c === 'x' ? r : (r&0x3|0x8));
+        return v.toString(16);
+      });
 
-        infoUrl = /^https?\:\/\//.test(programEvent.website) ? program.website : 'http://' + programEvent.website;
-        registrationUrl = /^https?:\/\//.test(programEvent.public_registration_url) ? programEvent.public_registration_url : 'http://' + programEvent.public_registration_url;
+      if (programData && programData.events && programData.events.length > 0) {
+        // Iterate through and render events
+        programContent += programData.events.map(function (programEvent) {
+          var formattedDate = self.formatDateString(programEvent.start_date),
+            infoUrl,
+            registrationUrl;
 
-        return "<div class='event-row'><p class='event-row__date'>" +
-            formattedDate +
-              (programEvent.vertical.length > 0 ? (' - ' + programEvent.vertical) : '') + "</p>" +
-              "<span class='event-row__form-controls'><a href='" + infoUrl + "'>More Info</a></span>" +
-              "<span class='event-row__form-controls'><a href='" + registrationUrl + "'>Sign up</a></span>" +
-              "<label for='" + formId + "' class='event-row__notification-trigger'>Future event alerts</label>" +
-              "<input id='" + formId + "' type='checkbox' class='event-row__activate-form' />" +
-              "<div class='event-row__form-target'>" +
+          infoUrl = /^https?\:\/\//.test(programEvent.website) ? program.website : 'http://' + programEvent.website;
+          registrationUrl = /^https?:\/\//.test(programEvent.public_registration_url) ? programEvent.public_registration_url : 'http://' + programEvent.public_registration_url;
+
+          return "<div class='event-row'><p class='event-row__date'>" +
+              formattedDate +
+                (programEvent.vertical.length > 0 ? (' - ' + programEvent.vertical) : '') + "</p>" +
+                "<span class='event-row__form-controls'><a href='" + infoUrl + "'>More Info</a></span>" +
+                "<span class='event-row__form-controls'><a href='" + registrationUrl + "'>Sign up</a></span>" +
+                "<label for='" + formId + "' class='event-row__notification-trigger'>Future event alerts</label>" +
+                "<input id='" + formId + "' type='checkbox' class='event-row__activate-form' />" +
+                "<div class='event-row__form-target'>" +
+                "<form action='" + self.options.notificationUrl + "' method='POST' target='_blank'>" +
+                "<input type='hidden' name='CITY' value='" + city.city + "' />" +
+                "<input type='hidden' name='MMERGE3' value='" + program + "' />" +
+                "<input type='hidden' name='MMERGE4' value='" + programEvent.vertical + "' />" +
+                "<input type='text' name='EMAIL' /><input type='submit' name='Subscribe' value='Subscribe' />" +
+                "</form></div>" +
+              "</div>";
+        }).join('');
+      } else {
+        // No event
+        programContent += "<div class='event-row'><p>No upcoming events</p>" +
+
+            "<span class='event-row__form-controls'><a href=' " + self.programOrganizeRegistrationUrl(program) +  "' target='_blank'>Organize an event</a></span>" +
+            "<label for='" + formId + "' class='event-row__notification-trigger'>Future event alerts</label>" +
+            "<input id='" + formId + "' type='checkbox' class='event-row__activate-form' />" +
+            "<div class='event-row__form-target'>" +
               "<form action='" + self.options.notificationUrl + "' method='POST' target='_blank'>" +
               "<input type='hidden' name='CITY' value='" + city.city + "' />" +
-              "<input type='hidden' name='MMERGE3' value='" + program.event_type + "' />" +
-              "<input type='hidden' name='MMERGE4' value='" + programEvent.vertical + "' />" +
+              "<input type='hidden' name='MMERGE3' value='" + program + "' />" +
+              "<input type='hidden' name='MMERGE4' value='' />" +
               "<input type='text' name='EMAIL' /><input type='submit' name='Subscribe' value='Subscribe' />" +
-              "</form></div>" +
-            "</div>";
-      }).join('');
+              "</form>" +
+            "</div>" +
+          "</div>";
+      }
 
       return programContent;
     }).join('');
 
     payload += "</div>";
     return payload;
+  };
+
+  MapApi.prototype.programOrganizeRegistrationUrl = function (program) {
+    switch (program) {
+      case 'Startup Weekend':
+        return 'http://startupweekend.org/organizer/application/';
+      case 'NEXT':
+        return 'http://www.swnext.co/get-involved/apply';
+      default:
+        return 'http://www.up.co/get-involved/become-leader';
+    }
   };
 
   MapApi.prototype.formatDateString = function (date) {

@@ -11,6 +11,7 @@
 
     .sw-cities-map .event-row {
       border-bottom: 1px solid #e1e1e1;
+      padding-bottom: 1em;
     }
     .sw-cities-map .event-row:last-child {
       border-bottom: none;
@@ -65,7 +66,7 @@
     $(function () {
         $('#mapArea').citiesmap({
           urlBase: 'http://localhost:3000',
-          programsOfInterest: ['Startup Weekend']
+          programsOfInterest: ['Startup Weekend', 'NEXT']
         });
     });
   </script>

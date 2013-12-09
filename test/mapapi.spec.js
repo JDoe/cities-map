@@ -229,8 +229,21 @@ describe('CitiesMap.MapApi', function () {
         describe('when no program specified', function () {
           it('should render all available programs in the window', function () {
             var windowText = instance.getCityInfoWindowContent(sampleCityData);
-            windowText.should.match(/Startup Weekend Paris/);
-            windowText.should.match(/NEXT Paris/);
+
+            var expectedPrograms = [
+              "Bootcamp",
+              "LeanStartup",
+              "Marketing",
+              "Meetup",
+              "NEXT",
+              "SW Corporate",
+              "Social",
+              "Startup Weekend",
+              "Summit"];
+
+            expectedPrograms.forEach(function (program) {
+              windowText.should.match(new RegExp(program + " Paris"));
+            });
           });
         });
 
@@ -266,6 +279,20 @@ describe('CitiesMap.MapApi', function () {
             var windowText = multipleInstance.getCityInfoWindowContent(sampleCityData);
             windowText.should.match(/Startup Weekend Paris/);
             windowText.should.match(/NEXT Paris/);
+          });
+        });
+
+        describe('when "SW Corporate" is specified but there is no example in the API data', function () {
+          it('should render an entry with a Organize CTA for SW Corporate', function () {
+            var corpInstance = new CitiesMap.MapApi(fakeElement, {
+              programsOfInterest: ['SW Corporate']
+            });
+
+            var windowText = corpInstance.getCityInfoWindowContent(sampleCityData);
+            windowText.should.match(/SW Corporate/);
+            windowText.should.match(/No upcoming events/);
+            windowText.should.match(/Organize an event/);
+            windowText.should.match(/Future event alerts/);
           });
         });
       });
@@ -350,6 +377,29 @@ describe('CitiesMap.MapApi', function () {
         instance.formatDateString(new Date(2013, 9, 1)).should.eq('Wednesday, October 1');
         instance.formatDateString(new Date(2013, 10, 1)).should.eq('Saturday, November 1');
         instance.formatDateString(new Date(2013, 11, 1)).should.eq('Monday, December 1');
+      });
+    });
+
+    describe('#programOrganizeRegistrationUrl', function () {
+      it('should be a function', function () {
+        instance.should.have.property('programOrganizeRegistrationUrl');
+        instance.programOrganizeRegistrationUrl.should.be.a('function');
+      });
+
+      it('should return the Organizer registration URL for Startup Weekend', function () {
+        instance.programOrganizeRegistrationUrl('Startup Weekend').should.eq('http://startupweekend.org/organizer/application/');
+      });
+
+      it('should return the Coordinator registration URL for NEXT', function () {
+        instance.programOrganizeRegistrationUrl('NEXT').should.eq('http://www.swnext.co/get-involved/apply');
+      });
+
+      it('should return the UP Become a Leader registration URL for anything else', function () {
+        instance.programOrganizeRegistrationUrl('Ignite').should.eq('http://www.up.co/get-involved/become-leader');
+        instance.programOrganizeRegistrationUrl('Meow').should.eq('http://www.up.co/get-involved/become-leader');
+        instance.programOrganizeRegistrationUrl('').should.eq('http://www.up.co/get-involved/become-leader');
+        instance.programOrganizeRegistrationUrl(undefined).should.eq('http://www.up.co/get-involved/become-leader');
+        instance.programOrganizeRegistrationUrl(null).should.eq('http://www.up.co/get-involved/become-leader');
       });
     });
 
