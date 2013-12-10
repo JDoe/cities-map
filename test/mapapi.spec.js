@@ -13,7 +13,14 @@ describe('CitiesMap.MapApi', function () {
     beforeEach(function () {
 
       gMapsStub = {
-        Map: sinon.spy(google.maps, 'Map'),
+        Map: sinon.stub(google.maps, 'Map', function () {
+          var controlObject = {
+            push: function (arg) { return arg; }
+          };
+          return {
+            controls: [ controlObject, controlObject, controlObject, controlObject ]
+          };
+        }),
         Marker: sinon.stub(google.maps, 'Marker', function () {
           return {
             addListener: function (event, func) {
@@ -214,7 +221,7 @@ describe('CitiesMap.MapApi', function () {
       it('should be a function', function () {
         instance.should.have.property('getCityInfoWindowContent');
         instance.getCityInfoWindowContent.should.be.a('function');
-    });
+      });
 
       it('should return a string', function () {
         instance.getCityInfoWindowContent(sampleCityData).should.be.a('string');
@@ -401,6 +408,107 @@ describe('CitiesMap.MapApi', function () {
         instance.programOrganizeRegistrationUrl(undefined).should.eq('http://www.up.co/get-involved/become-leader');
         instance.programOrganizeRegistrationUrl(null).should.eq('http://www.up.co/get-involved/become-leader');
       });
+    });
+
+    describe('#addFilterControlToMap', function () {
+      it('should be a function', function () {
+        instance.should.have.property('addFilterControlToMap');
+        instance.addFilterControlToMap.should.be.a('function');
+      });
+
+      it('should get called when an instance is created', function () {
+        var spy = sinon.spy(CitiesMap.MapApi.prototype, 'addFilterControlToMap')
+        var inst = new CitiesMap.MapApi(fakeElement);
+        spy.calledOnce.should.be.true;
+      });
+
+      it('should add a search box to the map controls', function () {
+        var testControlObj = { push: function () { } };
+        var controlPushSpy = sinon.spy(testControlObj, 'push');
+
+        google.maps.Map.restore();
+        sinon.stub(google.maps, 'Map', function () {
+          return {
+            controls: [ testControlObj, testControlObj, testControlObj, testControlObj ]
+          };
+        });
+
+        var inst = new CitiesMap.MapApi(fakeElement);
+
+        controlPushSpy.calledOnce.should.be.true;
+        var callArgs = controlPushSpy.getCall(0).args;
+
+        var inputArg = callArgs[0];
+        inputArg.should.have.property('tagName');
+        inputArg.tagName.should.equal('INPUT');
+
+        google.maps.Map.restore();
+      });
+    });
+
+    describe('#handleSearchFilter', function () {
+      var searchControl,
+        setVisibleA, setVisibleB, setVisibleC; 
+
+      beforeEach(function () {
+        searchControl = instance.searchControl;
+        instance.mapPoints = {
+          a: { city: 'Seattle' },
+          b: { city: 'Spokane' },
+          c: { city: 'Bellevue' }
+        };
+
+        instance.markers = {
+          a: { setVisible: function () { } },
+          b: { setVisible: function () { } },
+          c: { setVisible: function () { } }
+        };
+
+        setVisibleA = sinon.spy(instance.markers.a, 'setVisible');
+        setVisibleB = sinon.spy(instance.markers.b, 'setVisible');
+        setVisibleC = sinon.spy(instance.markers.c, 'setVisible');
+      });
+
+      afterEach(function () {
+        instance.markers.a.setVisible.restore();
+        instance.markers.b.setVisible.restore();
+        instance.markers.c.setVisible.restore();
+      });
+
+      it('should call hide on Bellevue and show on all else when search is "s"', function () {
+        searchControl.value = 'S';
+        $(searchControl).trigger('keyup');
+
+        setVisibleA.calledOnce.should.be.true;
+        setVisibleA.calledWith(true).should.be.true;
+        setVisibleB.calledOnce.should.be.true;
+        setVisibleB.calledWith(true).should.be.true;
+        setVisibleC.calledOnce.should.be.true;
+        setVisibleC.calledWith(false).should.be.true;
+      });
+
+      it('should only show Seattle as the search gets more specific', function () {
+        searchControl.value = 'Se';
+        $(searchControl).trigger('keyup');
+
+        setVisibleA.calledOnce.should.be.true;
+        setVisibleA.calledWith(true).should.be.true;
+        setVisibleB.calledOnce.should.be.true;
+        setVisibleB.calledWith(false).should.be.true;
+        setVisibleC.calledOnce.should.be.true;
+        setVisibleC.calledWith(false).should.be.true;
+      });
+
+      it('should show all markers if the search query is empty or cleared', function () {
+        searchControl.value = '';
+        $(searchControl).trigger('keyup');
+
+        setVisibleA.calledOnce.should.be.true;
+        setVisibleA.calledWith(true).should.be.true;
+        setVisibleB.calledOnce.should.be.true;
+        setVisibleB.calledWith(true).should.be.true;
+        setVisibleC.calledOnce.should.be.true;
+        setVisibleC.calledWith(true).should.be.true;      });
     });
 
   });

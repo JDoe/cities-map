@@ -31,10 +31,13 @@
       "Summit"
     ];
 
-    this.mapRef       = null;
-    this.mapPoints    = {};
+    this.mapRef        = null;
+    this.mapPoints     = {};
+    this.markers       = {};
+    this.searchControl = null;
 
     this.writeMapToElement();
+    this.addFilterControlToMap();
 
     return this;
   };
@@ -110,6 +113,7 @@
       marker.addListener('click', markerShowHandler);
 
       this.mapPoints[marker.__gm_id] = city;
+      this.markers[marker.__gm_id] = marker;
 
       return marker;
     };
@@ -149,6 +153,8 @@
   };
 
   /**
+   * #getCityInfoWindowContent
+   *
    * Given a city object with data from the API, return an HTML string to
    * display for the map info window
    */
@@ -237,6 +243,13 @@
     return payload;
   };
 
+  /**
+   * #programOrganizeRegistrationUrl
+   *
+   * Given a program type name, return the corresponding registration URL
+   * for that program. If a mapping cannot be found, always default to the
+   * UP Global "Become a Leader" form URL
+   */
   MapApi.prototype.programOrganizeRegistrationUrl = function (program) {
     switch (program) {
       case 'Startup Weekend':
@@ -248,6 +261,12 @@
     }
   };
 
+  /**
+   * #formatDateString
+   *
+   * Given a date string or date object, return a formatted date
+   * string of the format "dddd MMMM DD"
+   */
   MapApi.prototype.formatDateString = function (date) {
     var day, mon;
     if (typeof date === 'string') {
@@ -322,4 +341,74 @@
 
     return day + ", " + mon + " " + date.getUTCDate();
   };
+
+  /**
+   * #addFilterControlToMap
+   *
+   * Intended to be called by the constructor, this adds a search
+   * box to the top-right corner of the map UI on the page.
+   *
+   * It also sets up bindings so that the map system can respond to the
+   * user's search queries
+   */
+  MapApi.prototype.addFilterControlToMap = function () {
+    var searchBox = document.createElement('input'),
+        self = this;
+
+    searchBox.type = 'search';
+    searchBox.setAttribute('results', '');
+    searchBox.className = 'map-city-filter';
+
+    // Add to map
+    self.mapRef.controls[maps.ControlPosition.TOP_RIGHT].push(searchBox);
+
+    // Set up search query handler
+    $(searchBox).on('search', bind(self.handleSearchFilter, self));
+    $(searchBox).on('keyup' , bind(self.handleSearchFilter, self));
+
+    self.searchControl = searchBox;
+  };
+
+  /**
+   * bind
+   *
+   * An internal method. Helpful for wrapping functions intended to be called
+   * by event dispatchers while retaining their intended context
+   */
+  var bind = function (fn, context) {
+    var ctx = context;
+    return function () {
+      fn.call(ctx, arguments);
+    };
+  };
+
+  /**
+   * #handleSearchFilter
+   *
+   * Called by the browser event dispatcher when a user types in the map
+   * search box.
+   *
+   * Its intended effect is to loop through all known map points and show
+   * or hide the map point based on whether or not the city that it represents
+   * matches the user's search term.
+   *
+   * This implementation does not implement fuzzy searching. Instead, it does
+   * a case-insenstive search from the beginning of the city's name.
+   */
+  MapApi.prototype.handleSearchFilter = function () {
+    var self = this, // Note, that "this" can only be "MapApi" if bind is used
+        searchInput = self.searchControl.value,
+        searchRegex = new RegExp("^" + searchInput, "i");
+
+    Object.keys(self.markers).forEach(function (mapKey) {
+      if (searchInput === '' || searchRegex.test(self.mapPoints[mapKey].city)) {
+        // Show for empty searches (e.g., clearing) or matching cities
+        self.markers[mapKey].setVisible(true);
+      } else {
+        // Hide for anything else
+        self.markers[mapKey].setVisible(false);
+      }
+    });
+  };
+
 })(window);
