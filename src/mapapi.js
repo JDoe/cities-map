@@ -398,17 +398,54 @@
   MapApi.prototype.handleSearchFilter = function () {
     var self = this, // Note, that "this" can only be "MapApi" if bind is used
         searchInput = self.searchControl.value,
-        searchRegex = new RegExp("^" + searchInput, "i");
+        searchRegex = new RegExp("^" + searchInput, "i"),
+        dropdownCities = [];
 
     Object.keys(self.markers).forEach(function (mapKey) {
       if (searchInput === '' || searchRegex.test(self.mapPoints[mapKey].city)) {
         // Show for empty searches (e.g., clearing) or matching cities
         self.markers[mapKey].setVisible(true);
+        if (searchInput.length > 0) { dropdownCities.push(mapKey); }
       } else {
         // Hide for anything else
         self.markers[mapKey].setVisible(false);
       }
     });
+
+    // Generate the dropdown HTML and replace anything that might exist
+
+    var $searchInput = $(self.searchControl);
+
+    $(self.mapContainer).find('.search-results').remove();
+    var searchResults = $('<ul />', {
+      'class': 'search-results'
+    }).css({
+      position: 'absolute',
+      top: $searchInput.offset().top + $searchInput.height(),
+      left: $searchInput.offset().left
+    });
+
+    dropdownCities.forEach(function (cityMarkerId) {
+      searchResults.append(
+        $('<li />').
+          text(self.mapPoints[cityMarkerId].city).
+          data('markerid', cityMarkerId)
+      );
+    });
+
+    searchResults.find('li').on('click', function (evt) {
+      // Find the appropriate city and navigate to it
+      var el = $(evt.currentTarget);
+      var markerid = el.data('markerid');
+      var mapPoint = self.mapPoints[markerid];
+
+      self.mapRef.setCenter(new maps.LatLng(mapPoint.location[0], mapPoint.location[1]));
+
+      // Close the search results
+      $(self.mapContainer).find('.search-results').remove();
+    });
+
+    $(self.searchControl).after(searchResults);
   };
 
 })(window);
