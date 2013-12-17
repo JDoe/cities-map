@@ -89,6 +89,29 @@
       display: none;
     }
 
+    .map-city-filter {
+      font-size: 1em;
+      margin-top: 1em;
+      margin-right: 1em;
+      padding-left: 0.8em;
+      padding-right: 0.8em;
+    }
+    .map-city-filter, .search-results li {
+      height: 45px;
+      width: 380px;
+      background-color: #ffffff;
+      border: 1px solid #c6c4be;
+      border-radius: 4px;
+      color: #898989;
+    }
+    .search-results li {
+      border-radius: 0;
+      padding: 0;
+      padding-left: 1.6em;
+      line-height: 45px;
+      font-size: 0.8em;
+    }
+
     .sw-cities-map h1 {
       background-color: #555555;
       color: #ffffff;
@@ -122,6 +145,8 @@
       border: none;
       background-color: #ebebeb;
 
+      width: 50%;
+
       margin-right: 2px;
 
       -webkit-appearance: none;
@@ -130,6 +155,8 @@
 
     .sw-cities-map .event-row__form-target form input:last-child {
       margin-right: 0;
+      width: 35%;
+      cursor: pointer;
     }
 
     .sw-cities-map .event-row__form-target form input[type=submit] {
@@ -158,7 +185,7 @@
     $(function () {
         $('#mapArea').citiesmap({
           urlBase: 'http://localhost:3000',
-          programsOfInterest: ['Startup Weekend', 'NEXT']
+          programsOfInterest: ['Startup Weekend']
         });
     });
   </script>

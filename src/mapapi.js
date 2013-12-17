@@ -14,7 +14,8 @@
   var MapApi = CitiesMap.MapApi = function (mapContainer, mapOptions) {
     var configDefaults = {
           programsOfInterest: [],
-          notificationUrl: 'http://startupweekend.us1.list-manage.com/subscribe/post?u=77bee8d6876e3fd1aa815badb&amp;id=66eed7c427'
+          notificationUrl: 'http://startupweekend.us1.list-manage.com/subscribe/post?u=77bee8d6876e3fd1aa815badb&amp;id=66eed7c427',
+          disableDefaultUI: true
         };
 
     this.mapContainer  = mapContainer;
@@ -83,7 +84,7 @@
       var self = this,
           desiredHeight, desiredWidth,
           $element             = self.mapContainer,
-          mapOptions           = {};
+          mapOptions           = self.options;
 
       mapOptions.center    = new maps.LatLng(-34.397, 150.644);
       mapOptions.zoom      = 8;
@@ -433,14 +434,25 @@
       'class': 'search-results'
     }).css({
       position: 'absolute',
-      top: $searchInput.offset().top + $searchInput.height(),
-      left: $searchInput.offset().left
+      top: $searchInput.offset().top + $searchInput.height() - 6,
+      left: $searchInput.offset().left - 7,
+      width: $searchInput.width()
     });
 
     dropdownCities.forEach(function (cityMarkerId) {
+      var cityData = self.mapPoints[cityMarkerId],
+          listingTextParts = [cityData.city];
+
+      if (cityData.state) {
+        listingTextParts.push(cityData.state);
+      }
+      if (cityData.country) {
+        listingTextParts.push(cityData.country);
+      }
+
       searchResults.append(
         $('<li />').
-          text(self.mapPoints[cityMarkerId].city).
+          text(listingTextParts.join(', ')).
           data('markerid', cityMarkerId)
       );
     });
