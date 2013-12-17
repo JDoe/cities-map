@@ -39,6 +39,7 @@
     "import",
     "CitiesMap",
     "instanceof",
-    "console"
+    "console",
+    "MarkerClusterer"
   ]
 }

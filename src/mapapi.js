@@ -13,9 +13,9 @@
    */
   var MapApi = CitiesMap.MapApi = function (mapContainer, mapOptions) {
     var configDefaults = {
-      programsOfInterest: [],
-      notificationUrl: 'http://startupweekend.us1.list-manage.com/subscribe/post?u=77bee8d6876e3fd1aa815badb&amp;id=66eed7c427'
-    };
+          programsOfInterest: [],
+          notificationUrl: 'http://startupweekend.us1.list-manage.com/subscribe/post?u=77bee8d6876e3fd1aa815badb&amp;id=66eed7c427'
+        };
 
     this.mapContainer  = mapContainer;
     this.options       = $.extend(configDefaults, (mapOptions || {}));
@@ -38,6 +38,14 @@
 
     this.writeMapToElement();
     this.addFilterControlToMap();
+
+    // If the MarkerClustererPlus library is available, enable it on the map
+    if (root.MarkerClusterer) {
+      this.clusterManager = new root.MarkerClusterer(this.mapRef, [], {
+        maxZoom: 8,
+        minimumClusterSize: 4
+      });
+    }
 
     return this;
   };
@@ -114,6 +122,10 @@
 
       this.mapPoints[marker.__gm_id] = city;
       this.markers[marker.__gm_id] = marker;
+      // If clustering is enabled, add it to the cluster manager
+      if (this.clusterManager) {
+        this.clusterManager.addMarker(marker);
+      }
 
       return marker;
     };
@@ -440,6 +452,7 @@
       var mapPoint = self.mapPoints[markerid];
 
       self.mapRef.setCenter(new maps.LatLng(mapPoint.location[0], mapPoint.location[1]));
+      self.mapRef.setZoom(12); // Be sure to zoom in past any potential clustering
 
       // Close the search results
       $(self.mapContainer).find('.search-results').remove();
