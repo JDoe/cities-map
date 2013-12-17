@@ -266,13 +266,13 @@
                 "<input type='hidden' name='CITY' value='" + city.city + "' />" +
                 "<input type='hidden' name='MMERGE3' value='" + program + "' />" +
                 "<input type='hidden' name='MMERGE4' value='" + programEvent.vertical + "' />" +
-                "<input type='text' name='EMAIL' /><input type='submit' name='Subscribe' value='Subscribe' />" +
+                "<input type='text' name='EMAIL' placeholder='Email Address' /><input type='submit' name='Subscribe' value='Subscribe' />" +
                 "</form></div>" +
               "</div>";
         }).join('');
       } else {
         // No event
-        programContent += "<div class='event-row'><p>No upcoming events</p>" +
+        programContent += "<div class='event-row'><p class='event-row__date'>No upcoming events</p>" +
 
             "<span class='event-row__form-controls'><a href=' " + self.programOrganizeRegistrationUrl(program) +  "' target='_blank'>Organize an event</a></span>" +
             "<label for='" + formId + "' class='event-row__notification-trigger'>Future event alerts</label>" +
@@ -282,7 +282,7 @@
               "<input type='hidden' name='CITY' value='" + city.city + "' />" +
               "<input type='hidden' name='MMERGE3' value='" + program + "' />" +
               "<input type='hidden' name='MMERGE4' value='' />" +
-              "<input type='text' name='EMAIL' /><input type='submit' name='Subscribe' value='Subscribe' />" +
+              "<input type='text' name='EMAIL' placeholder='Email Address'/><input type='submit' name='Subscribe' value='Subscribe' />" +
               "</form>" +
             "</div>" +
           "</div>";
