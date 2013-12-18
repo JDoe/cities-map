@@ -96,8 +96,10 @@
           $element             = self.mapContainer,
           mapOptions           = self.options;
 
-      mapOptions.center    = new maps.LatLng(-34.397, 150.644);
-      mapOptions.zoom      = 8;
+      mapOptions.center    = mapOptions.center ?
+        new maps.LatLng(mapOptions.center[0], mapOptions.center[1]) :
+        new maps.LatLng(51.4791, 0); // Default to Greenwich, London, UK
+      mapOptions.zoom      = mapOptions.zoom || 2;
       mapOptions.mapTypeId = maps.MapTypeId.ROADMAP;
 
       // Assign instance references to the internal map interface objects
@@ -223,8 +225,17 @@
             infoUrl,
             registrationUrl;
 
-          infoUrl = /^https?\:\/\//.test(programEvent.website) ? program.website : 'http://' + programEvent.website;
-          registrationUrl = /^https?:\/\//.test(programEvent.public_registration_url) ? programEvent.public_registration_url : 'http://' + programEvent.public_registration_url;
+          // Make sure protocols are correct
+          if (programEvent.website && programEvent.website.length > 0) {
+            infoUrl = /^https?\:\/\//.test(programEvent.website) ? program.website : 'http://' + programEvent.website;
+          }
+          if (programEvent.public_registration_url && programEvent.public_registration_url.length > 0) {
+            registrationUrl = /^https?:\/\//.test(programEvent.public_registration_url) ? programEvent.public_registration_url : 'http://' + programEvent.public_registration_url;
+          }
+
+          // Make sure nothing is undefined
+          infoUrl = infoUrl || registrationUrl || 'http://www.startupweekend.org';
+          registrationUrl = registrationUrl || infoUrl || 'http://www.startupweekend.org';
 
           return "<div class='event-row'><p class='event-row__date'>" +
               formattedDate +
