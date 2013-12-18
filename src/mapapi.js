@@ -126,7 +126,8 @@
     MapApi.prototype.createCityPoint = function (city, markerShowHandler) {
       var marker = new maps.Marker({
         map      : this.mapRef,
-        position : new maps.LatLng(city.location[0], city.location[1])
+        position : new maps.LatLng(city.location[0], city.location[1]),
+        icon: 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|00f09d|00f09d|00f09d'
       });
 
       marker.addListener('click', markerShowHandler);
@@ -444,9 +445,9 @@
       'class': 'search-results'
     }).css({
       position: 'absolute',
-      top: $searchInput.offset().top + $searchInput.height() - 6,
-      left: $searchInput.offset().left - 7,
-      width: $searchInput.width()
+      top: $searchInput.offset().top + $searchInput.height() - 8,
+      left: $searchInput.offset().left - 8,
+      width: $searchInput.outerWidth() - 1
     });
 
     dropdownCities.forEach(function (cityMarkerId) {
@@ -475,6 +476,9 @@
 
       self.mapRef.setCenter(new maps.LatLng(mapPoint.location[0], mapPoint.location[1]));
       self.mapRef.setZoom(12); // Be sure to zoom in past any potential clustering
+
+      // Update the search box to indicate the selected result
+      $searchInput.val($(el).text());
 
       // Close the search results
       $(self.mapContainer).find('.search-results').remove();
