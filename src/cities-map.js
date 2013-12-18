@@ -14,11 +14,11 @@
     var mapContainer = $(this);
 
     var data = Data.loadCitiesData(opts);
-    data.error(function (errorMsg) {
+    data.fail(function (errorMsg) {
       window.alert(errorMsg);
     });
 
-    data.success(function (cities) {
+    data.done(function (cities) {
       var map     = new CitiesMap.MapApi(mapContainer, opts),
           handler = map.getMarkerShowHandler();
 
