@@ -433,6 +433,7 @@
   MapApi.prototype.handleSearchFilter = function () {
     var self = this, // Note, that "this" can only be "MapApi" if bind is used
         searchInput = self.searchControl.value,
+        $searchInput = $(self.searchControl),
         searchRegex = new RegExp("^" + searchInput, "i"),
         dropdownCities = [];
 
@@ -449,53 +450,56 @@
 
     // Generate the dropdown HTML and replace anything that might exist
 
-    var $searchInput = $(self.searchControl);
 
+    $(self.mapContainer).find('.search-results').children().remove();
     $(self.mapContainer).find('.search-results').remove();
-    var searchResults = $('<ul />', {
-      'class': 'search-results'
-    }).css({
-      position: 'absolute',
-      top: $searchInput.offset().top + $searchInput.height() - 8,
-      left: $searchInput.offset().left - 8,
-      width: $searchInput.outerWidth() - 1
-    });
 
-    dropdownCities.forEach(function (cityMarkerId) {
-      var cityData = self.mapPoints[cityMarkerId],
-          listingTextParts = [cityData.city];
+    if (searchInput && searchInput.length > 0) {
+      var searchResults = $('<ul />', {
+        'class': 'search-results'
+      }).css({
+        position: 'absolute',
+        top: $searchInput.offset().top + $searchInput.height() - 8,
+        left: $searchInput.offset().left - 8,
+        width: $searchInput.outerWidth() - 1
+      });
 
-      if (cityData.state) {
-        listingTextParts.push(cityData.state);
-      }
-      if (cityData.country) {
-        listingTextParts.push(cityData.country);
-      }
+      dropdownCities.forEach(function (cityMarkerId) {
+        var cityData = self.mapPoints[cityMarkerId],
+            listingTextParts = [cityData.city];
 
-      searchResults.append(
-        $('<li />').
-          text(listingTextParts.join(', ')).
-          data('markerid', cityMarkerId)
-      );
-    });
+        if (cityData.state) {
+          listingTextParts.push(cityData.state);
+        }
+        if (cityData.country) {
+          listingTextParts.push(cityData.country);
+        }
 
-    searchResults.find('li').on('click', function (evt) {
-      // Find the appropriate city and navigate to it
-      var el = $(evt.currentTarget);
-      var markerid = el.data('markerid');
-      var mapPoint = self.mapPoints[markerid];
+        searchResults.append(
+          $('<li />').
+            text(listingTextParts.join(', ')).
+            data('markerid', cityMarkerId)
+        );
+      });
 
-      self.mapRef.setCenter(new maps.LatLng(mapPoint.location[0], mapPoint.location[1]));
-      self.mapRef.setZoom(12); // Be sure to zoom in past any potential clustering
+      searchResults.find('li').on('click', function (evt) {
+        // Find the appropriate city and navigate to it
+        var el = $(evt.currentTarget);
+        var markerid = el.data('markerid');
+        var mapPoint = self.mapPoints[markerid];
 
-      // Update the search box to indicate the selected result
-      $searchInput.val($(el).text());
+        self.mapRef.setCenter(new maps.LatLng(mapPoint.location[0], mapPoint.location[1]));
+        self.mapRef.setZoom(12); // Be sure to zoom in past any potential clustering
 
-      // Close the search results
-      $(self.mapContainer).find('.search-results').remove();
-    });
+        // Update the search box to indicate the selected result
+        $searchInput.val($(el).text());
 
-    $(self.searchControl).after(searchResults);
+        // Close the search results
+        $(self.mapContainer).find('.search-results').remove();
+      });
+
+      $(self.searchControl).after(searchResults);
+    }
   };
 
 })(window);
