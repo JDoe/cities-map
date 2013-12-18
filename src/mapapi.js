@@ -15,7 +15,17 @@
     var configDefaults = {
           programsOfInterest: [],
           notificationUrl: 'http://startupweekend.us1.list-manage.com/subscribe/post?u=77bee8d6876e3fd1aa815badb&amp;id=66eed7c427',
-          disableDefaultUI: true
+          disableDefaultUI: true,
+          styles: [
+            // Turn off everything
+            { 'stylers': [{ visibility: 'off' }] },
+            // Turn water back on and flatten the color
+            { 'featureType': 'water', 'stylers': [{ 'visibility': 'on'}, { 'color': '#e0ded8' }] },
+            // Turn terrain back on
+            { 'featureType': 'landscape', 'stylers': [{ visibility: 'on' }, { 'color': '#f4f2eb' }] },
+            // Turn administrative and location names back on
+            { 'featureType': 'administrative', 'stylers': [{ visibility: 'on' }] }
+          ]
         };
 
     this.mapContainer  = mapContainer;
