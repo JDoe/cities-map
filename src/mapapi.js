@@ -54,7 +54,19 @@
     if (root.MarkerClusterer) {
       this.clusterManager = new root.MarkerClusterer(this.mapRef, [], {
         maxZoom: 8,
-        minimumClusterSize: 4
+        minimumClusterSize: 4,
+        calculator: function (markersArray) {
+
+          return {
+            'text': (typeof markersArray.length === 'undefined') ? 0 : markersArray.length,
+            'index': 0 // Always use the first style available
+          };
+        },
+        styles: [{
+          height: 53,
+          width: 53,
+          url: 'https://s3.amazonaws.com/up-global-cms/misc-assets/up-global-map-grouping.png'
+        }]
       });
     }
 
