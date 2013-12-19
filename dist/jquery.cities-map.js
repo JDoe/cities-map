@@ -37,10 +37,10 @@
 
     return $.get('' + options.urlBase + '/cities');
   };
-})(window, jQuery);
+})(window, (typeof jQuery203 === 'undefined' ? jQuery : jQuery203));
 ;(function (root) {
   var google = window.google;
-  var $ = window.jQuery;
+  var $ = typeof window.jQuery203 === 'undefined' ? window.jQuery : window.jQuery203;
   var maps;
   var CitiesMap = root.CitiesMap = ( root.CitiesMap || {} );
 
@@ -591,5 +591,5 @@
     });
   };
 
-}(jQuery, CitiesMap));
+}((typeof jQuery203 === 'undefined' ? jQuery : jQuery203), CitiesMap));
 

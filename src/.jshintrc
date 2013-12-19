@@ -13,6 +13,7 @@
   "browser": true,
   "predef": [
     "jQuery",
+    "jQuery203",
     "CitiesMap"
   ]
 }

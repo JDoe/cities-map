@@ -31,4 +31,4 @@
 
     return $.get('' + options.urlBase + '/cities');
   };
-})(window, jQuery);
+})(window, (typeof jQuery203 === 'undefined' ? jQuery : jQuery203));

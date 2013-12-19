@@ -42,5 +42,5 @@
     });
   };
 
-}(jQuery, CitiesMap));
+}((typeof jQuery203 === 'undefined' ? jQuery : jQuery203), CitiesMap));
 
