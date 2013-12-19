@@ -20,7 +20,7 @@ The only dependencies are on Google Maps and jQuery.
 
 ## Usage
 
-Make sure you include [jQuery]() and the [Google Maps JavaScript API](https://developers.google.com/maps/documentation/javascript/tutorial) 
+Make sure you include [jQuery](http://jquery.com/download/) and the [Google Maps JavaScript API](https://developers.google.com/maps/documentation/javascript/tutorial) 
 on your page.
 
 You can get a copy of the distribution [development](https://raw.github.com/StartupWeekend/cities-map/master/dist/jquery.cities-map.js) and [production](https://raw.github.com/StartupWeekend/cities-map/master/dist/jquery.cities-map.min.js) versions from GitHub.
@@ -67,4 +67,4 @@ controls to match the UP Global branding.
 
 ## Release History
 
-* 0.0.1 - 2013-12-18 - Initial release
+* `0.0.1 - 2013-12-18` - Initial release
