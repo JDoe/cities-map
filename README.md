@@ -1,5 +1,4 @@
 # UP Global Cities Map
-# UP Global Cities Map
 
 _A smarter map showcasing UP Global cities and programs_
 
