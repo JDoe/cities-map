@@ -1,8 +1,8 @@
 /*! cities-map - v0.0.1 - 2013-12-19
-* https://github.com/TheDahv/cities-map
+* https://github.com/StartupWeekend/cities-map
 * Copyright (c) 2013 David Pierce; Licensed MIT */
 /*! cities-map - v0.0.1 - 2013-12-19
-* https://github.com/TheDahv/cities-map
+* https://github.com/StartupWeekend/cities-map
 * Copyright (c) 2013 David Pierce; Licensed MIT */
 (function (root, $) {
   var CitiesMap = root.CitiesMap = ( root.CitiesMap || {} );

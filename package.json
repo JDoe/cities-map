@@ -3,9 +3,12 @@
   "version": "0.0.1",
   "description": "UP Global Cities Map",
   "keywords": [
-    "jquery-plugin"
+    "jquery-plugin",
+    "google maps",
+    "up global",
+    "startup weeekend"
   ],
-  "homepage": "https://github.com/TheDahv/cities-map",
+  "homepage": "https://github.com/StartupWeekend/cities-map",
   "author": {
     "name": "David Pierce",
     "email": "david@up.co",
@@ -13,7 +16,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/TheDahv/cities-map.git"
+    "url": "https://github.com/StartupWeekend/cities-map.git"
   },
   "licenses": [
     {
