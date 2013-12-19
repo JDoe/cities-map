@@ -14,7 +14,6 @@
   var MapApi = CitiesMap.MapApi = function (mapContainer, mapOptions) {
     var configDefaults = {
           programsOfInterest: [],
-          notificationUrl: 'http://startupweekend.us1.list-manage.com/subscribe/post?u=77bee8d6876e3fd1aa815badb&amp;id=66eed7c427',
           disableDefaultUI: true,
           styles: [
             // Turn off everything
@@ -30,6 +29,7 @@
 
     this.mapContainer  = mapContainer;
     this.options       = $.extend(configDefaults, (mapOptions || {}));
+    this.options.notificationUrl = 'http://startupweekend.us1.list-manage.com/subscribe/post?u=77bee8d6876e3fd1aa815badb&amp;id=66eed7c427';
     this.knownPrograms = [
       "Bootcamp",
       "LeanStartup",
