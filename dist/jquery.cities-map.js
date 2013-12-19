@@ -511,8 +511,8 @@
         'class': 'search-results'
       }).css({
         position: 'absolute',
-        top: $searchInput.offset().top + $searchInput.height() - 8,
-        left: $searchInput.offset().left - 8,
+        top: $searchInput.position().top + $searchInput.outerHeight() + parseInt($searchInput.css('margin-top'), 10),
+        left: $searchInput.position().left,
         width: $searchInput.outerWidth() - 1
       });
 
