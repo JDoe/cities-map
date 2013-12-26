@@ -3,119 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title></title>
-
-  <style type="text/css">
-    .gm-style-iw {
-      width: 92% !important;
-    }
-
-    /* Targeting the 'X' button */
-    .gm-style-iw + div {
-      top: 18px !important;
-      right: 18px !important;
-      height: 20px !important;
-    }
-    .gm-style-iw + div:after {
-      content: '\00D7';
-      font-size: 20px;
-      font-weight: bold;
-    }
-    .gm-style-iw + div img {
-      display: none;
-    }
-
-    .map-city-filter {
-      font-size: 1em;
-      margin-top: 1em;
-      margin-right: 1em;
-      padding-left: 0.8em;
-      padding-right: 0.8em;
-      outline: none;
-    }
-    .map-city-filter, .search-results li {
-      height: 45px;
-      width: 380px;
-      background-color: #ffffff;
-      border: 1px solid #c6c4be;
-      border-radius: 4px;
-      color: #898989;
-    }
-    .search-results li {
-      border-radius: 0;
-      padding: 0;
-      padding-left: 1.6em;
-      line-height: 45px;
-      font-size: 0.8em;
-      border-top: none;
-    }
-    .search-results li:hover {
-      background-color: #00f09d;
-      color: white;
-      font-weight: bold;
-    }
-    .search-results li:first-child {
-      border-top: 1px solid #c6c4be;
-    }
-
-    .sw-cities-map h1 {
-      background-color: #555555;
-      color: #ffffff;
-      font-size: 15px;
-      padding: 12px;
-      margin-top: 0;
-      border-radius: 2px;
-    }
-
-    .sw-cities-map .event-row {
-      margin-left: 12px;
-    }
-
-    .sw-cities-map .event-row input {
-      outline: none;
-    }
-
-    .sw-cities-map .event-row .event-row__date {
-      font-weight: bold;
-    }
-
-    .sw-cities-map .event-row__form-controls:after {
-      color: #e0ded6;
-    }
-
-    .sw-cities-map .event-row a, .sw-cities-map .event-row .event-row__notification-trigger {
-      font-weight: bold;
-      color: #34d18b;
-      text-decoration: none;
-    }
-
-    .sw-cities-map .event-row__form-target form input {
-      height: 30px;
-      padding: 0 12px;
-      border: none;
-      background-color: #ebebeb;
-
-      width: 50%;
-
-      margin-right: 2px;
-
-      -webkit-appearance: none;
-      -moz-appearance: none;
-    }
-
-    .sw-cities-map .event-row__form-target form input:last-child {
-      margin-right: 0;
-      width: 35%;
-      cursor: pointer;
-    }
-
-    .sw-cities-map .event-row__form-target form input[type=submit] {
-      background-color: #00f09d;
-      color: #fff;
-      font-weight: bold;
-      border-radius: 4px;
-    }
-  </style>
-
+  <link rel="stylesheet" type="text/css" href="demo.css">
 </head>
 <body>
   <div id="mapArea"
@@ -133,7 +21,7 @@
   <script type="text/javascript">
     $(function () {
         $('#mapArea').citiesmap({
-          urlBase: 'http://localhost:3000',
+          urlBase: 'http://swoop.startupweekend.org',
           programsOfInterest: ['Startup Weekend'],
           center: [41.25, -96.0],
           zoom: 4
