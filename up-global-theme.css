@@ -107,3 +107,83 @@
       font-weight: bold;
       border-radius: 4px;
     }
+
+		/** Custom controls area **/
+		.mapCustomControls {
+			background-color: #00f09d;
+			width: 45px;
+			height: 45px;
+			border-radius: 4px;
+
+			cursor: pointer;
+
+			font-size: 1em !important;
+      margin-top: 1em;
+      margin-right: 0.5em;
+
+			-moz-transition: width 0.6s ease-in;
+			-webkit-transition: width 0.6s ease-in;
+			transition: width 0.6s ease-in;
+
+		}
+		.mapCustomControls:after {
+			content: '';
+			background: url('Gear-128.png') no-repeat;
+			background-position: 0 0;
+
+			cursor: pointer;
+
+			-webkit-transition: -webkit-transform 0.5s ease-in;
+			transition: transform 0.5s ease-in;
+
+			width: 45px;
+			height: 45px;
+
+			position: absolute;
+			top: 0;
+			right: 0;
+		}
+		.mapCustomControls > * {
+			visibility: hidden;
+			opacity: 0;
+
+			-moz-transition: opacity 0.2s linear;
+			-webkit-transition: opacity 0.2s linear;
+			transition: opacity 0.2s linear;
+		}
+		.mapCustomControls.open {
+			-moz-transition: width 0.6s ease-in;
+			-webkit-transition: width 0.6s ease-in;
+			transition: width 0.6s ease-in;
+
+			text-align: left;
+			padding-left: 1em;
+			width: 16em;
+
+			line-height: 45px;
+		}
+		.mapCustomControls.open:after {
+			-webkit-transform: rotate(90deg);
+			transform: rotate(90deg);
+		}
+
+		.mapCustomControls.open > * {
+			visibility: visible;
+			opacity: 1;
+
+			-moz-transition-delay: 0.6s;
+			-webkit-transition-delay: 0.6s;
+			transition-delay: 0.6s;
+		}
+
+		/** Off State **/
+		label[for=activeCityCheckbox], input#activeCityCheckbox {
+			cursor: pointer;
+		}
+		label[for=activeCityCheckbox] {
+			color: #fff;
+			font-weight: bold !important;
+			font-size: 0.8em !important;
+			margin-right: 8px;
+		}
+

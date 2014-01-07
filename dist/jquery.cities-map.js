@@ -1,9 +1,9 @@
-/*! cities-map - v0.0.1 - 2013-12-19
+/*! cities-map - v0.0.1 - 2014-01-07
 * https://github.com/StartupWeekend/cities-map
-* Copyright (c) 2013 David Pierce; Licensed MIT */
-/*! cities-map - v0.0.1 - 2013-12-19
+* Copyright (c) 2014 David Pierce; Licensed MIT */
+/*! cities-map - v0.0.1 - 2014-01-07
 * https://github.com/StartupWeekend/cities-map
-* Copyright (c) 2013 David Pierce; Licensed MIT */
+* Copyright (c) 2014 David Pierce; Licensed MIT */
 (function (root, $) {
   var CitiesMap = root.CitiesMap = ( root.CitiesMap || {} );
 
@@ -55,6 +55,7 @@
     var configDefaults = {
           programsOfInterest: [],
           disableDefaultUI: true,
+          showActiveCityToggle: false,
           styles: [
             // Turn off everything
             { 'stylers': [{ visibility: 'off' }] },
@@ -82,13 +83,32 @@
       "Summit"
     ];
 
-    this.mapRef        = null;
-    this.mapPoints     = {};
-    this.markers       = {};
-    this.searchControl = null;
+    this.mapRef               = null;
+    this.mapPoints            = {};
+    this.markers              = {};
+    this.searchControl        = null;
+    this.mapControlsContainer = null;
+    this.activeCityToggle     = null;
 
     this.writeMapToElement();
     this.addFilterControlToMap();
+    if (this.options.showActiveCityToggle) {
+      this.mapControlsContainer = document.createElement('div');
+      this.mapControlsContainer.setAttribute('class', 'mapCustomControls');
+
+      this.addActiveCityToggle();
+
+      this.mapRef.controls[maps.ControlPosition.TOP_RIGHT].push(this.mapControlsContainer);
+
+      var $mapControls = $(this.mapControlsContainer);
+      $($mapControls).click(function () {
+        if($mapControls.hasClass('open')) {
+          $mapControls.removeClass('open');
+        } else {
+          $mapControls.addClass('open');
+        }
+      });
+    }
 
     // If the MarkerClustererPlus library is available, enable it on the map
     if (root.MarkerClusterer) {
@@ -456,6 +476,26 @@
     self.searchControl = searchBox;
   };
 
+  MapApi.prototype.addActiveCityToggle = function () {
+    var self = this,
+        checkbox = document.createElement('input'),
+        label = document.createElement('label');
+
+    checkbox.setAttribute('type', 'checkbox');
+    checkbox.setAttribute('id', 'activeCityCheckbox');
+
+    label.setAttribute('for', 'activeCityCheckbox');
+    label.textContent = 'Show Cities This Weekend';
+
+    $(checkbox).change(bind(self.toggleActiveCities, self));
+
+    // Add to map control widget
+    self.mapControlsContainer.appendChild(label);
+    self.mapControlsContainer.appendChild(checkbox);
+
+    self.activeCityToggle = checkbox;
+  };
+
   /**
    * bind
    *
@@ -552,6 +592,66 @@
 
       $(self.searchControl).after(searchResults);
     }
+  };
+
+  MapApi.prototype.toggleActiveCities = function () {
+    var self = this,
+        showActiveCities = self.activeCityToggle.checked,
+        today,
+        daysUntilNextMonday,
+        nextMonday;
+
+    // today = new Date();
+    today = new Date(2014,0,6);
+    // Monday is 1
+    daysUntilNextMonday = 8 - today.getDay();
+    daysUntilNextMonday = (daysUntilNextMonday === 8) ? 1 : daysUntilNextMonday; // Sunday is 0
+
+    // Add the days in milliseconds
+    nextMonday = new Date(today.getTime() + (1000 * 60 * 60 * 24 * daysUntilNextMonday));
+
+    if (this.clusterManager) {
+      if (showActiveCities) {
+        // Turn off clustering if enabled
+        this.clusterManager.setMinimumClusterSize(9999);
+      } else {
+        // Turn on clustering
+        this.clusterManager.setMinimumClusterSize(4);
+      }
+      this.clusterManager.repaint();
+    }
+
+    Object.keys(self.markers).forEach(function (mapKey) {
+      var desiredProgramsForCity,
+          programsOfInterest = self.options.programsOfInterest,
+          hasEventsThisWeekend,
+          showThisCity = false;
+
+      if (showActiveCities) {
+        desiredProgramsForCity = self.mapPoints[mapKey].upcoming_programs.filter(function (program) {
+          // Is this program among the desired programs for this map?
+          return (programsOfInterest.indexOf(program.event_type) >= 0);
+        });
+
+        hasEventsThisWeekend = desiredProgramsForCity.some(function (program) {
+          // Does this program have any events this weekend?
+          return program.events.some(function (programEvent) {
+            // Does this event start before next Monday?
+            return (new Date(programEvent.start_date)) <= nextMonday;
+          });
+        });
+
+        if (hasEventsThisWeekend) {
+          showThisCity = true;
+        } else {
+          showThisCity = false;
+        }
+      } else {
+        showThisCity = true;
+      }
+
+      self.markers[mapKey].setVisible(showThisCity);
+    });
   };
 
 })(window);

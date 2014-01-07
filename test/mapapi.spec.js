@@ -144,7 +144,7 @@ describe('CitiesMap.MapApi', function () {
         afterEach(function () {
           var prop;
           for(prop in instance) {
-            if (instance.hasOwnProperty(prop) && instance[prop].restore) {
+            if (instance.hasOwnProperty(prop) && instance[prop] && instance[prop].restore) {
               instance[prop].restore();
             }
           }
