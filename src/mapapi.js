@@ -15,6 +15,7 @@
     var configDefaults = {
           programsOfInterest: [],
           disableDefaultUI: true,
+          zoomControl: true,
           styles: [
             // Turn off everything
             { 'stylers': [{ visibility: 'off' }] },

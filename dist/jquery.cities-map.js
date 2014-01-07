@@ -1,9 +1,9 @@
-/*! cities-map - v0.0.1 - 2013-12-19
+/*! cities-map - v0.0.1 - 2014-01-07
 * https://github.com/StartupWeekend/cities-map
-* Copyright (c) 2013 David Pierce; Licensed MIT */
-/*! cities-map - v0.0.1 - 2013-12-19
+* Copyright (c) 2014 David Pierce; Licensed MIT */
+/*! cities-map - v0.0.1 - 2014-01-07
 * https://github.com/StartupWeekend/cities-map
-* Copyright (c) 2013 David Pierce; Licensed MIT */
+* Copyright (c) 2014 David Pierce; Licensed MIT */
 (function (root, $) {
   var CitiesMap = root.CitiesMap = ( root.CitiesMap || {} );
 
@@ -55,6 +55,7 @@
     var configDefaults = {
           programsOfInterest: [],
           disableDefaultUI: true,
+          zoomControl: true,
           styles: [
             // Turn off everything
             { 'stylers': [{ visibility: 'off' }] },
