@@ -128,7 +128,7 @@
 		}
 		.mapCustomControls:after {
 			content: '';
-			background: url('map-gear.png') no-repeat;
+			background: url('https://s3.amazonaws.com/up-global-cms/misc-assets/map-gear.png') no-repeat;
 			background-position: 0 0;
 
 			cursor: pointer;
