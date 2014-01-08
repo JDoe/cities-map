@@ -450,8 +450,8 @@
     $(checkbox).change(bind(self.toggleActiveCities, self));
 
     // Add to map control widget
-    self.mapControlsContainer.appendChild(label);
     self.mapControlsContainer.appendChild(checkbox);
+    self.mapControlsContainer.appendChild(label);
 
     self.activeCityToggle = checkbox;
   };
