@@ -332,8 +332,18 @@
           infoUrl = infoUrl || registrationUrl || 'http://www.startupweekend.org';
           registrationUrl = registrationUrl || infoUrl || 'http://www.startupweekend.org';
 
+          var nickname = '';
+          if (programEvent.nickname && programEvent.nickname.length > 0) {
+            if (/^startup weekend/i.test(programEvent.nickname)) {
+              nickname = ' - ' + programEvent.nickname.replace(/^startup weekend/i, '').trim();
+            } else {
+              nickname = ' - ' + programEvent.nickname;
+            }
+          }
+
           return "<div class='event-row'><p class='event-row__date'>" +
               formattedDate +
+                nickname +
                 (programEvent.vertical.length > 0 ? (' - ' + programEvent.vertical) : '') + "</p>" +
                 "<span class='event-row__form-controls'><a href='" + infoUrl + "'>More Info</a></span>" +
                 "<span class='event-row__form-controls'><a href='" + registrationUrl + "'>Sign up</a></span>" +

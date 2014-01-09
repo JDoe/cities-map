@@ -183,6 +183,15 @@ describe('CitiesMap.MapApi', function () {
                     "_id" : "5276e3936e401802000002ca",
                     "start_date" : "2013-11-22T00:00:00.000Z",
                     "event_type" : "Startup Weekend"
+                  },
+                  {
+                    "vertical" : "",
+                    "public_registration_url" : "http:\/\/www.eventbrite.com\/event\/7861362547",
+                    "website" : "paris.startupweekend.org",
+                    "_id" : "5276e3936e401802000002ca",
+                    "start_date" : "2013-11-22T00:00:00.000Z",
+                    "event_type" : "Startup Weekend",
+										"nickname" : "Startup Weekend Oklahoma University"
                   }
                 ]
               },
@@ -227,9 +236,19 @@ describe('CitiesMap.MapApi', function () {
         instance.getCityInfoWindowContent(sampleCityData).should.be.a('string');
       });
 
+			it('should handle nicknames when present', function () {
+				var results = instance.getCityInfoWindowContent(sampleCityData);
+				results.should.match(/Oklahoma University/);
+			});
+
+			it('should strip out redundant references to Startup Weekend in nicknames', function () {
+				var results = instance.getCityInfoWindowContent(sampleCityData);
+				results.should.not.match(/Startup Weekend Oklahoma University/);
+			});
+
       it('should call #formatDateString', function () {
         instance.getCityInfoWindowContent(sampleCityData);
-        dateSpy.calledTwice.should.be.true;
+        dateSpy.callCount.should.equal(3);
       });
 
       describe('handling preferred programs', function () {
