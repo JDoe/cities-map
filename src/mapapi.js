@@ -372,7 +372,7 @@
       date = new Date(date);
     }
 
-    day = days[date.getDay()];
+    day = days[date.getUTCDay()];
     mon = months[date.getUTCMonth()];
 
     return day + ", " + mon + " " + date.getUTCDate();
