@@ -68,3 +68,7 @@ controls to match the UP Global branding.
 ## Release History
 
 * `0.0.1 - 2013-12-18` - Initial release
+* `0.0.2 - 2014-01-08`
+   * "Active Cities this weekend" filter support
+   * Possible fix for time zone issues when calculating event day of week
+   * Render an event's nickname if it is present
