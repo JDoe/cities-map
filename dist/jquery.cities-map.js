@@ -402,28 +402,28 @@
     if (typeof date === 'string') {
       date = new Date(date);
     }
-    
-    switch(date.getUTCDay()) {
+
+    switch(date.getDay()) {
       case 0:
-        day = "Monday";
+        day = "Sunday";
         break;
       case 1:
-        day = "Tuesday";
+        day = "Monday";
         break;
       case 2:
-        day = "Wednesday";
+        day = "Tuesday";
         break;
       case 3:
-        day = "Thursday";
+        day = "Wednesday";
         break;
       case 4:
-        day = "Friday";
+        day = "Thursday";
         break;
       case 5:
-        day = "Saturday";
+        day = "Friday";
         break;
       case 6:
-        day = "Sunday";
+        day = "Saturday";
         break;
     }
 

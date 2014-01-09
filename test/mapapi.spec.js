@@ -372,18 +372,18 @@ describe('CitiesMap.MapApi', function () {
       });
 
       it('should format a date in DD MMM, YYYY format', function () {
-        instance.formatDateString(new Date(2013, 0, 1)).should.eq('Wednesday, January 1');
-        instance.formatDateString(new Date(2013, 1, 1)).should.eq('Saturday, February 1');
-        instance.formatDateString(new Date(2013, 2, 1)).should.eq('Saturday, March 1');
-        instance.formatDateString(new Date(2013, 3, 1)).should.eq('Tuesday, April 1');
-        instance.formatDateString(new Date(2013, 4, 1)).should.eq('Thursday, May 1');
-        instance.formatDateString(new Date(2013, 5, 1)).should.eq('Sunday, June 1');
-        instance.formatDateString(new Date(2013, 6, 1)).should.eq('Tuesday, July 1');
-        instance.formatDateString(new Date(2013, 7, 1)).should.eq('Friday, August 1');
-        instance.formatDateString(new Date(2013, 8, 1)).should.eq('Monday, September 1');
-        instance.formatDateString(new Date(2013, 9, 1)).should.eq('Wednesday, October 1');
-        instance.formatDateString(new Date(2013, 10, 1)).should.eq('Saturday, November 1');
-        instance.formatDateString(new Date(2013, 11, 1)).should.eq('Monday, December 1');
+        instance.formatDateString(new Date(2013, 0, 1)).should.eq('Tuesday, January 1');
+        instance.formatDateString(new Date(2013, 1, 1)).should.eq('Friday, February 1');
+        instance.formatDateString(new Date(2013, 2, 1)).should.eq('Friday, March 1');
+        instance.formatDateString(new Date(2013, 3, 1)).should.eq('Monday, April 1');
+        instance.formatDateString(new Date(2013, 4, 1)).should.eq('Wednesday, May 1');
+        instance.formatDateString(new Date(2013, 5, 1)).should.eq('Saturday, June 1');
+        instance.formatDateString(new Date(2013, 6, 1)).should.eq('Monday, July 1');
+        instance.formatDateString(new Date(2013, 7, 1)).should.eq('Thursday, August 1');
+        instance.formatDateString(new Date(2013, 8, 1)).should.eq('Sunday, September 1');
+        instance.formatDateString(new Date(2013, 9, 1)).should.eq('Tuesday, October 1');
+        instance.formatDateString(new Date(2013, 10, 1)).should.eq('Friday, November 1');
+        instance.formatDateString(new Date(2013, 11, 1)).should.eq('Sunday, December 1');
       });
     });
 
