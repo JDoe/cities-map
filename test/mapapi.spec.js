@@ -511,5 +511,80 @@ describe('CitiesMap.MapApi', function () {
         setVisibleC.calledWith(true).should.be.true;      });
     });
 
+		describe('#mapControlsContainer', function () {
+			it('should not exist on the map by default', function () {
+				(instance.mapControlsContainer == null).should.be.true;
+			});
+
+			it('should exist if active cities toggle is enabled', function () {
+				var enabled = new CitiesMap.MapApi(fakeElement, {
+					showActiveCityToggle: true
+				});
+				(enabled.mapControlsContainer == null).should.be.false;
+			});
+		});
+
+		describe('#addActiveCityToggle', function () {
+			it('should be a function', function () {
+				instance.should.have.property('addActiveCityToggle');
+				instance.addActiveCityToggle.should.be.a('function');
+			});
+
+			it('should not be called by default', function () {
+				var spy = sinon.spy(CitiesMap.MapApi.prototype, 'addActiveCityToggle');
+				var spiedInstance = new CitiesMap.MapApi(fakeElement);
+				spy.calledOnce.should.be.false;
+				CitiesMap.MapApi.prototype.addActiveCityToggle.restore();
+			});
+
+			it('should be called if the option is passed', function () {
+				var spy = sinon.spy(CitiesMap.MapApi.prototype, 'addActiveCityToggle');
+				var spiedInstance = new CitiesMap.MapApi(fakeElement, {
+					showActiveCityToggle: true
+				});
+
+				spy.calledOnce.should.be.true;
+				CitiesMap.MapApi.prototype.addActiveCityToggle.restore();
+			});
+		});
+
+		describe('#findNextMonday', function () {
+			var nextMonday = (new Date(2014,0,13)).getTime();
+			it('should return 2014-01-12 on 2014-01-05', function () {
+				var sunday = new Date(2014,0,5);
+				instance.findNextMonday(sunday).getTime().should.equal((new Date(2014,0,6)).getTime());
+			});
+
+			it('should return 2014-01-12 on 2014-01-06', function () {
+				var monday = new Date(2014,0,6);
+				instance.findNextMonday(monday).getTime().should.equal(nextMonday)
+			});
+
+			it('should return 2014-01-12 on 2014-01-07', function () {
+				var tuesday = new Date(2014,0,7);
+				instance.findNextMonday(tuesday).getTime().should.equal(nextMonday)
+			});
+
+			it('should return 2014-01-12 on 2014-01-08', function () {
+				var wednesday = new Date(2014,0,8);
+				instance.findNextMonday(wednesday).getTime().should.equal(nextMonday)
+			});
+
+			it('should return 2014-01-12 on 2014-01-09', function () {
+				var thursday = new Date(2014,0,9);
+				instance.findNextMonday(thursday).getTime().should.equal(nextMonday)
+			});
+
+			it('should return 2014-01-12 on 2014-01-10', function () {
+				var friday = new Date(2014,0,10);
+				instance.findNextMonday(friday).getTime().should.equal(nextMonday)
+			});
+
+			it('should return 2014-01-12 on 2014-01-11', function () {
+				var saturday = new Date(2014,0,6);
+				instance.findNextMonday(saturday).getTime().should.equal(nextMonday)
+			});
+
+		});
   });
 });
