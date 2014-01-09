@@ -55,6 +55,7 @@
     var configDefaults = {
           programsOfInterest: [],
           disableDefaultUI: true,
+          zoomControl: true,
           showActiveCityToggle: false,
           styles: [
             // Turn off everything
