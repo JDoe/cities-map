@@ -408,76 +408,22 @@
    * string of the format "dddd MMMM DD"
    */
   MapApi.prototype.formatDateString = function (date) {
-    var day, mon;
+    var day, mon, days = [
+      "Sunday", "Monday", "Tuesday", "Wednesday",
+      "Thursday", "Friday", "Saturday"
+      ],
+      months = [
+        "January", "February", "March", "April",
+        "May", "June", "July", "August",
+        "September", "October", "November", "December"
+        ];
+
     if (typeof date === 'string') {
       date = new Date(date);
     }
-    
-    switch(date.getUTCDay()) {
-      case 0:
-        day = "Monday";
-        break;
-      case 1:
-        day = "Tuesday";
-        break;
-      case 2:
-        day = "Wednesday";
-        break;
-      case 3:
-        day = "Thursday";
-        break;
-      case 4:
-        day = "Friday";
-        break;
-      case 5:
-        day = "Saturday";
-        break;
-      case 6:
-        day = "Sunday";
-        break;
-    }
 
-    switch(date.getUTCMonth()) {
-      case 0:
-        mon = "January";
-        break;
-      case 1:
-        mon = "February";
-        break;
-      case 2:
-        mon = "March";
-        break;
-      case 3:
-        mon = "April";
-        break;
-      case 4:
-        mon = "May";
-        break;
-      case 5:
-        mon = "June";
-        break;
-      case 6:
-        mon = "July";
-        break;
-      case 7:
-        mon = "August";
-        break;
-      case 8:
-        mon = "September";
-        break;
-      case 9:
-        mon = "October";
-        break;
-      case 10:
-        mon = "November";
-        break;
-      case 11:
-        mon = "December";
-        break;
-      default:
-        mon = "";
-        break;
-    }
+    day = days[date.getUTCDay()];
+    mon = months[date.getUTCMonth()];
 
     return day + ", " + mon + " " + date.getUTCDate();
   };
