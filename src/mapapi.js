@@ -16,6 +16,7 @@
           programsOfInterest: [],
           disableDefaultUI: true,
           zoomControl: true,
+          showActiveCityToggle: false,
           styles: [
             // Turn off everything
             { 'stylers': [{ visibility: 'off' }] },
@@ -27,6 +28,10 @@
             { 'featureType': 'administrative', 'stylers': [{ visibility: 'on' }] }
           ]
         };
+    // Helpful reference for any function scopes in the constructor
+    var self = this;
+    // A jQuery reference to the custom map controls container
+    var $mapControls;
 
     this.mapContainer  = mapContainer;
     this.options       = $.extend(configDefaults, (mapOptions || {}));
@@ -43,13 +48,50 @@
       "Summit"
     ];
 
-    this.mapRef        = null;
-    this.mapPoints     = {};
-    this.markers       = {};
-    this.searchControl = null;
+    this.mapRef               = null;
+    this.mapPoints            = {};
+    this.markers              = {};
+    this.searchControl        = null;
+
+    // A div to contain custom map behavior controls
+    // It should only show up if custom controls are enabled
+    this.mapControlsContainer = null;
+    // The toggle control for filtering to active cities
+    this.activeCityToggle     = null;
 
     this.writeMapToElement();
     this.addFilterControlToMap();
+
+    // As our list of custom map controls grows, we want to see if at least
+    // one is turned on so we can add the controls container div to the map
+    var turnOnCustomControls = ['showActiveCityToggle'].reduce(function (state, customOption) {
+      // Turn on custom controls if we are already in the on state
+      // or if this current custom option is marked as True by the client
+      return state || (self.options[customOption] === true);
+    }, false);
+
+    if (turnOnCustomControls) {
+      // We have custom controls, so let's add a container
+      this.mapControlsContainer = document.createElement('div');
+      this.mapControlsContainer.setAttribute('class', 'mapCustomControls');
+
+      // Add a click handler to open and close the controls container
+      $mapControls = $(this.mapControlsContainer);
+      $mapControls.click(function () {
+        if($mapControls.hasClass('open')) {
+          $mapControls.removeClass('open');
+        } else {
+          $mapControls.addClass('open');
+        }
+      });
+
+      // Add it to the top of the map next to the filter search bar
+      this.mapRef.controls[maps.ControlPosition.TOP_RIGHT].push(this.mapControlsContainer);
+    }
+
+    if (this.options.showActiveCityToggle) {
+      this.addActiveCityToggle();
+    }
 
     // If the MarkerClustererPlus library is available, enable it on the map
     if (root.MarkerClusterer) {
@@ -418,6 +460,39 @@
   };
 
   /**
+   * #addActiveCityToggle
+   *
+   * Intended to be called in the constructor, this adds a checkbox
+   * to toggle the visible map points to those that have a program event
+   * in the upcoming weekend for the programs of interest that are
+   * active in the map.
+   *
+   * Note, this will be added to the map controls container when added to the map.
+   *
+   * Turn this on by passing true for the 'activeCityToggle' option in the
+   * map constructor options.
+   */
+  MapApi.prototype.addActiveCityToggle = function () {
+    var self = this,
+        checkbox = document.createElement('input'),
+        label = document.createElement('label');
+
+    checkbox.setAttribute('type', 'checkbox');
+    checkbox.setAttribute('id', 'activeCityCheckbox');
+
+    label.setAttribute('for', 'activeCityCheckbox');
+    label.textContent = 'Show Cities This Weekend';
+
+    $(checkbox).change(bind(self.toggleActiveCities, self));
+
+    // Add to map control widget
+    self.mapControlsContainer.appendChild(checkbox);
+    self.mapControlsContainer.appendChild(label);
+
+    self.activeCityToggle = checkbox;
+  };
+
+  /**
    * bind
    *
    * An internal method. Helpful for wrapping functions intended to be called
@@ -513,6 +588,93 @@
 
       $(self.searchControl).after(searchResults);
     }
+  };
+
+  /**
+   * Given a Date object, find the most immediate Monday in the calendar
+   * and return its date.
+   * 
+   * For example, if it is Sunday, it would return the following date. If it
+   * is Tuesday, it will return the date object for 6 days following to get to
+   * 'next Monday'
+   */
+  MapApi.prototype.findNextMonday = function (today) {
+    var daysUntilNextMonday, nextMonday;
+
+    // Monday is 1
+    daysUntilNextMonday = 8 - today.getDay();
+    daysUntilNextMonday = (daysUntilNextMonday === 8) ? 1 : daysUntilNextMonday; // Sunday is 0
+
+    // Add the days in milliseconds
+    nextMonday = new Date(today.getTime() + (1000 * 60 * 60 * 24 * daysUntilNextMonday));
+    return nextMonday;
+  };
+
+  /**
+   * Called by the browser event dispatcher when a user clicks on the active city
+   * toggle checkbox.
+   *
+   * It leverages the knowledge of the current date to determine when the following Monday
+   * is. It is fair to assume this covers all events that are considered 'this weekend', regardless
+   * of whether they start on Thursday, Friday, or Saturday.
+   *
+   * Once that is determined, it loops through each city and detects the following:
+   *    1. Does this city have upcoming events for programs of interest?
+   *    2. Of those programs, do any events exist whose start date is the upcoming weekend?
+   *
+   * For events that pass all detection logic, the corresponding map pin is activated and all others
+   * are turned off. It also disables clustering when filtering, and turns it back on when filtering
+   * is removed.
+   */
+  MapApi.prototype.toggleActiveCities = function () {
+    var self = this,
+        showActiveCities = self.activeCityToggle.checked,
+        nextMonday;
+
+    nextMonday = self.findNextMonday(new Date());
+
+    if (this.clusterManager) {
+      if (showActiveCities) {
+        // Turn off clustering if enabled
+        this.clusterManager.setMinimumClusterSize(9999);
+      } else {
+        // Turn on clustering
+        this.clusterManager.setMinimumClusterSize(4);
+      }
+      this.clusterManager.repaint();
+    }
+
+    Object.keys(self.markers).forEach(function (mapKey) {
+      var desiredProgramsForCity,
+          programsOfInterest = self.options.programsOfInterest,
+          hasEventsThisWeekend,
+          showThisCity = false;
+
+      if (showActiveCities) {
+        desiredProgramsForCity = self.mapPoints[mapKey].upcoming_programs.filter(function (program) {
+          // Is this program among the desired programs for this map?
+          return (programsOfInterest.indexOf(program.event_type) >= 0);
+        });
+
+        hasEventsThisWeekend = desiredProgramsForCity.some(function (program) {
+          // Does this program have any events this weekend?
+          return program.events.some(function (programEvent) {
+            // Does this event start before next Monday?
+            return (new Date(programEvent.start_date)) <= nextMonday;
+          });
+        });
+
+        if (hasEventsThisWeekend) {
+          showThisCity = true;
+        } else {
+          showThisCity = false;
+        }
+      } else {
+        showThisCity = true;
+      }
+
+      self.markers[mapKey].setVisible(showThisCity);
+    });
   };
 
 })(window);
