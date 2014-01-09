@@ -53,6 +53,8 @@ specify yourself.
     * `Startup Weekend`
     * `Summit`
 * `disableDefaultUI` - A boolean indicating whether Google Maps should render its default map controls. This value is passed directly to Google Maps. Defaults to `false`
+* `zoomControl` - A boolean indicating whether the map's zoom slider should be visible. This value is passed directly to Google Maps. Defaults to `true`
+* `showActiveCityToggle` - A boolean indicating whether a control should be made available to let the user filter map pins to cities with program events in the upcoming weekend. Defaults to `false`
 * `styles` - An array of [Google Maps style objects](https://developers.google.com/maps/documentation/javascript/styling#style_syntax). This value is passed directly to Google Maps. Defaults to a flat map with most objects turned off except state labels
 * `urlBase` - A string indicating the API source of the cities data. This is mostly useful for the UP Global core team since we have access to local test servers. Defaults to `http://swoop.startupweekend.org`
 * `center` - An array of length 2 containing two floating point numbers representing the desired central focal point of the map in terms of latitude and longitude. It defaults to Greenwich in London, UK, or `[51.4791, 0]`. This value is passed directly to Google Maps
