@@ -189,8 +189,9 @@
 
       marker.addListener('click', markerShowHandler);
 
-      this.mapPoints[marker.__gm_id] = city;
-      this.markers[marker.__gm_id] = marker;
+      var _id = this.markerId(marker);
+      this.mapPoints[_id] = city;
+      this.markers[_id] = marker;
       // If clustering is enabled, add it to the cluster manager
       if (this.clusterManager) {
         this.clusterManager.addMarker(marker);
@@ -204,7 +205,7 @@
    * #getMarkerShowHandler
    *
    * Creates a map marker click handler with a cached reference to the
-   * MapApi instance. 
+   * MapApi instance.
    *
    * The returned function will use the shared reference to provide click handlers
    * for each point
@@ -219,8 +220,8 @@
     // Return the function that will actually be called by the event dispatcher
     return function (markerClickEvent) {
       var marker = this,
-          markerId   = marker.__gm_id,
-          cityData   = self.mapPoints[markerId];
+        markerId   = self.markerId(marker),
+        cityData   = self.mapPoints[markerId];
 
       infoWindow.setContent(self.getCityInfoWindowContent(cityData));
 
@@ -549,7 +550,7 @@
   /**
    * Given a Date object, find the most immediate Monday in the calendar
    * and return its date.
-   * 
+   *
    * For example, if it is Sunday, it would return the following date. If it
    * is Tuesday, it will return the date object for 6 days following to get to
    * 'next Monday'
@@ -631,6 +632,15 @@
 
       self.markers[mapKey].setVisible(showThisCity);
     });
+  };
+
+  // markers have an id at a property `closure_uid_NNNNNN`
+  MapApi.prototype.markerId = function(marker) {
+    var _id;
+    Object.keys(marker).forEach(function(key){
+      if (key.indexOf("closure_uid_") === 0) { _id = key; }
+    });
+    return marker[_id];
   };
 
 })(window);
