@@ -115,7 +115,7 @@ describe('CitiesMap.MapApi', function () {
           getContentSpy = sinon.spy(instance, 'getCityInfoWindowContent');
           dateSpy = sinon.stub(instance, 'formatDateString').returns('');
           eventStub = { stop: function () {} };
-          markerStub = { '__gm_id': 1 };
+          markerStub = { 'closure_uid_12345': 1 };
           instance.mapPoints = {
             1: {
               city: 'Test City',
@@ -467,7 +467,7 @@ describe('CitiesMap.MapApi', function () {
 
     describe('#handleSearchFilter', function () {
       var searchControl,
-        setVisibleA, setVisibleB, setVisibleC; 
+        setVisibleA, setVisibleB, setVisibleC;
 
       beforeEach(function () {
         searchControl = instance.searchControl;
@@ -605,5 +605,13 @@ describe('CitiesMap.MapApi', function () {
 			});
 
 		});
+
+    describe('#markerId', function(){
+      console.log('its here');
+      it('should return a property like closure_uid_NNNNN', function(){
+        var marker = {closure_uid_34324234234: 1};
+        instance.markerId(marker).should.equal(1);
+      })
+    });
   });
 });
