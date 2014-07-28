@@ -68,7 +68,7 @@ describe('CitiesMap.Data', function () {
       // Call again with the default URL
       CitiesMap.Data.loadCitiesData()
         .success(function (data) {
-          defaultStub.calledWith('http://swoop.startupweekend.org/cities').should.be.true;
+          defaultStub.calledWith('https://swoop.up.co/cities').should.be.true;
 
           done();
         });
@@ -77,7 +77,7 @@ describe('CitiesMap.Data', function () {
     it('should return an array of city objects for a successful query', function (done) {
       testObj.success(function (data) {
         data.should.be.instanceOf(Array);
-        done(); 
+        done();
       });
     });
 

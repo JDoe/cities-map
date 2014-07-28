@@ -30,7 +30,7 @@
     opts = opts || {};
 
     defaultOptions = {
-      urlBase: 'http://swoop.startupweekend.org'
+      urlBase: 'https://swoop.up.co'
     };
 
     options = $.extend(defaultOptions, opts);
