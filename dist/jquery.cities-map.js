@@ -1,7 +1,7 @@
-/*! cities-map - v0.0.1 - 2014-01-08
+/*! cities-map - v0.0.3 - 2014-07-28
 * https://github.com/StartupWeekend/cities-map
 * Copyright (c) 2014 David Pierce; Licensed MIT */
-/*! cities-map - v0.0.1 - 2014-01-08
+/*! cities-map - v0.0.3 - 2014-07-28
 * https://github.com/StartupWeekend/cities-map
 * Copyright (c) 2014 David Pierce; Licensed MIT */
 (function (root, $) {
