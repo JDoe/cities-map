@@ -676,7 +676,6 @@
 
   // markers have an id at a property `closure_uid_NNNNNN`
   MapApi.prototype.markerId = function(marker) {
-    // markers have an id at a property `closure_uid_NNNNNN`
     var _id;
     Object.keys(marker).forEach(function(key){
       if (key.indexOf("closure_uid_") === 0) { _id = key; }
