@@ -20,7 +20,7 @@ The only dependencies are on Google Maps and jQuery.
 
 ## Usage
 
-Make sure you include [jQuery](http://jquery.com/download/) and the [Google Maps JavaScript API](https://developers.google.com/maps/documentation/javascript/tutorial) 
+Make sure you include [jQuery](http://jquery.com/download/) and the [Google Maps JavaScript API](https://developers.google.com/maps/documentation/javascript/tutorial)
 on your page.
 
 You can get a copy of the distribution [development](https://raw.github.com/StartupWeekend/cities-map/master/dist/jquery.cities-map.js) and [production](https://raw.github.com/StartupWeekend/cities-map/master/dist/jquery.cities-map.min.js) versions from GitHub.
@@ -74,3 +74,7 @@ controls to match the UP Global branding.
    * "Active Cities this weekend" filter support
    * Possible fix for time zone issues when calculating event day of week
    * Render an event's nickname if it is present
+* `0.0.3 - 2014-07-28`
+  * fix bug due to gmaps.js removal of `__gm_id` on Marker objects
+     * fixes broken search
+     * fixes broken 'marker click' event
